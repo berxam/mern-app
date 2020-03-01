@@ -1,4 +1,3 @@
-// Require ListingModel
 const ListingModel = require('../models/ListingModel')
 
 const readAll = async (req, res) => {

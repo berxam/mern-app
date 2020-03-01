@@ -1,15 +1,17 @@
 import React from 'react'
-import ListingView from './components/ListingView'
-import './styles/App.css'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import LandingPage from './components/LandingPage'
+import ListingHolder from './components/ListingHolder'
+import ListingDetails from './components/ListingDetails'
 
 export default () => (
-  <>
-    <header>
-      <h1>Vaihtokauppa :)</h1>
-    </header>
-    <main>
-      Insert react-router here instead of this
-      <ListingView />
-    </main>
-  </>
+  <Router>
+    <Navbar />
+    <Switch>
+      <Route path="/" exact component={LandingPage} />
+      <Route path="/listings" exact component={ListingHolder} />
+      <Route path="/listings/:id" component={ListingDetails} />
+    </Switch>
+  </Router>
 )

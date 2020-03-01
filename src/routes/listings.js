@@ -1,14 +1,10 @@
-const express = require('express')
-const listingRouter = express.Router()
-
-// Get listing controller
+const router = require('express').Router()
 const listing = require('../controllers/ListingControl')
 
-// Bind controller methods to routes
-listingRouter.get('/', listing.readAll)
-listingRouter.get('/:id', listing.readById)
-listingRouter.post('/', listing.create)
-listingRouter.put('/:id', listing.update)
-listingRouter.delete('/:id', listing.remove)
+router.get('/', listing.readAll)
+router.get('/:id', listing.readById)
+router.post('/', listing.create)
+router.put('/:id', listing.update)
+router.delete('/:id', listing.remove)
 
-module.exports = listingRouter
+module.exports = router
