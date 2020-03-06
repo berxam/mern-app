@@ -2,7 +2,6 @@
 
 .ListingHolder {
     display: grid;
-    padding: 1.5em;
-    gap: 1.5em;
     grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+    gap: 1.5em;
 }

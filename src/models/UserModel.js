@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose')
-const bcrypt = require('bcryptjs')
+const { hash, compare } = require('bcryptjs')
 
 const UserSchema = new Schema({
   email: {
@@ -17,14 +17,15 @@ const UserSchema = new Schema({
     type: String,
     required: true
   }
+}, {
+  timestamps: { createdAt: true }
 })
 
 // Hash the user's password before inserting a new user
 UserSchema.pre('save', async function (next) {
   if (this.isModified('password') || this.isNew) {
     try {
-      const hash = await bcrypt.hash(this.password, 12)
-      this.password = hash
+      this.password = await hash(this.password, 12)
       next()
     } catch (err) {
       next(err)
@@ -36,7 +37,7 @@ UserSchema.pre('save', async function (next) {
 
 // Compare password input to password saved in database
 UserSchema.methods.comparePassword = async function (password) {
-  const res = await bcrypt.compare(password, this.password)
+  const res = await compare(password, this.password)
   return res
 }
 

@@ -1,16 +1,42 @@
 const ListingModel = require('../models/ListingModel')
 
-const readAll = async (req, res) => {
+/**
+ * Shows listings with pagination.
+ *
+ * Uses GET parameters "limit" and "page" to list only
+ * "limit" amount of results per page. However, they aren't
+ * necessary because they have defaults. Response holds
+ * props "next" & "prev" for easy navigation in frontend.
+ */
+exports.read = async (req, res) => {
+  let { limit = 10, page = 0 } = req.query
+  limit = parseInt(limit)
+  page = parseInt(page)
+
   try {
-    const result = await ListingModel.find()
-    if (!result) res.sendStatus(404)
-    res.json(result)
+    const numberOfListings = await ListingModel.estimatedDocumentCount()
+    const listings = await ListingModel.find()
+      .sort({ createdAt: 'asc' })
+      .skip(limit * page)
+      .limit(limit)
+
+    const baseURL = `${req.protocol}://${req.get('host')}/listings?limit=${limit}`
+    const nextPageIsEmpty = numberOfListings < limit * (page + 1)
+    const onFirstPage = (page - 1) < 0
+
+    res.json({
+      count: numberOfListings,
+      next: nextPageIsEmpty ? null : `${baseURL}&page=${page + 1}`,
+      prev: onFirstPage ? null : `${baseURL}&page=${page - 1}`,
+      data: listings
+    })
   } catch (error) {
+    console.error(error)
     res.status(500).json(error)
   }
 }
 
-const readById = async (req, res) => {
+exports.readById = async (req, res) => {
   try {
     const result = await ListingModel.findById(req.params.id)
     res.json(result)
@@ -25,7 +51,7 @@ const readById = async (req, res) => {
   }
 }
 
-const create = async (req, res) => {
+exports.create = async (req, res) => {
   const listing = new ListingModel(req.body)
 
   try {
@@ -38,7 +64,7 @@ const create = async (req, res) => {
   }
 }
 
-const update = async (req, res) => {
+exports.update = async (req, res) => {
   const _id = req.params.id
 
   try {
@@ -64,7 +90,7 @@ const update = async (req, res) => {
   }
 }
 
-const remove = async (req, res) => {
+exports.remove = async (req, res) => {
   const _id = req.params.id
 
   try {
@@ -75,5 +101,3 @@ const remove = async (req, res) => {
     res.status(500).json(error)
   }
 }
-
-module.exports = { readAll, readById, create, update, remove }

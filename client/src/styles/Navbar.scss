@@ -1,18 +1,23 @@
 @import '_colors';
 
 .navbar {
-    width: 100%;
+  width: 100%;
 
-    nav {
-        display: flex;
-    
-        a {
-            color: $primary-color;
-            padding: .5em;
-    
-            &:hover {
-                color: lighten($primary-color, 20%);
-            }
-        }
+  nav {
+    display: flex;
+    align-items: center;
+    padding: .5em;
+
+    a, .btn, .btn-primary {
+      margin: 0 .5em;
     }
+
+    a {
+      color: $primary-color;
+
+      &:hover {
+        color: lighten($primary-color, 10%);
+      }
+    }
+  }
 }

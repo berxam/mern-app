@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const { Schema, model } = require('mongoose')
 
 const ListingSchema = new Schema({
   title: {
@@ -9,6 +8,8 @@ const ListingSchema = new Schema({
   description: String,
   keywords: Array,
   img: String
+}, {
+  timestamps: { createdAt: true }
 })
 
-module.exports = mongoose.model('listing', ListingSchema)
+module.exports = model('listing', ListingSchema)

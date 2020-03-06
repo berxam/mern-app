@@ -1,0 +1,18 @@
+/**
+ * Generates grid classes that use flexbox.
+ *
+ * Classnames will be breakpoint name concatenated with
+ * the column width (as fraction of $columns) so for
+ * example, an element might have class="d12 m6 x4"
+ * and it will act accordingly in different screens.
+ *
+ * @param {string} $prefix  Name of the breakpoint.
+ * @param {int}    $columns Amount of columns. Optional, defaults to 12.
+ */
+@mixin createColumns($prefix, $columns: 12) {
+  @for $i from 1 through $columns {
+    .#{$prefix}#{$i} {
+      flex: 1 1 percentage($i / $columns);
+    }
+  }
+}

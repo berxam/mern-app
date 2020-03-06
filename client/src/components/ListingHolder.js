@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import Listing from './Listing'
+import ListingPreview from './ListingPreview'
 import '../styles/ListingHolder.scss'
 
 export default class extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      listingsEndpoint: 'http://localhost:5000/listings?limit=8&page=0',
       listings: []
     }
   }
@@ -15,24 +16,34 @@ export default class extends Component {
   }
 
   loadListings = async () => {
-    const response = await fetch('http://localhost:5000/listings')
-    const listings = await response.json()
+    if (this.state.listingsEndpoint) {
+      const response = await fetch(this.state.listingsEndpoint)
+      const { data, next } = await response.json()
   
-    this.setState({ listings })
+      this.setState(state => ({
+          listings: [...state.listings, ...data],
+          listingsEndpoint: next
+      }))
+    } else {
+        // indicate to user that there are no more listings to load
+    }
   }
 
   render () {
     return (
-      <section className="ListingHolder">
-        {this.state.listings.map(listing => (
-          <Listing
-            key={listing._id}
-            id={listing._id}
-            title={listing.title}
-            desc={listing.description}
-          />
-        ))}
-      </section>
+      <>
+        <section className="ListingHolder">
+          {this.state.listings.map(listing => (
+            <ListingPreview
+              key={listing._id}
+              id={listing._id}
+              title={listing.title}
+              desc={listing.description}
+            />
+          ))}
+        </section>
+        {this.state.listingsEndpoint ? 'Loading...' : `That's all the listings!`}
+      </>
     )
   }
 }
