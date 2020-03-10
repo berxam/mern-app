@@ -1,4 +1,5 @@
 import React from 'react'
+import Loader from './Loader'
 
 export default class extends React.Component {
   constructor (props) {
@@ -26,8 +27,12 @@ export default class extends React.Component {
 
     return (
       <main>
-        <h1>{title ? title : 'Loading...'}</h1>
-        <p>{description ? description : 'Loading...'}</p>
+        {title && description ? (
+          <>
+            <h1>{title}</h1>
+            <p>{description}</p>
+          </>
+        ) : <Loader />}
       </main>
     )
   }

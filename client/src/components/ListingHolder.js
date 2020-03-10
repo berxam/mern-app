@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ListingPreview from './ListingPreview'
+import Loader from './Loader'
 import '../styles/ListingHolder.scss'
 
 export default class extends Component {
@@ -9,10 +10,11 @@ export default class extends Component {
       listingsEndpoint: 'http://localhost:5000/listings?limit=8&page=0',
       listings: []
     }
+    this.instersectionObserver = new IntersectionObserver(this.intersectionHandler)
   }
 
-  componentDidMount () {
-    this.loadListings()
+  componentWillUnmount () {
+    this.instersectionObserver.disconnect()
   }
 
   loadListings = async () => {
@@ -25,7 +27,21 @@ export default class extends Component {
           listingsEndpoint: next
       }))
     } else {
-        // indicate to user that there are no more listings to load
+      this.instersectionObserver.disconnect()
+    }
+  }
+
+  intersectionHandler = (entries) => {
+    if (entries[0].isIntersecting) {
+      this.loadListings()
+    }
+  }
+
+  setRef = (ref) => {
+    this.loaderRef = ref
+
+    if (this.loaderRef) {
+      this.instersectionObserver.observe(this.loaderRef)
     }
   }
 
@@ -42,7 +58,7 @@ export default class extends Component {
             />
           ))}
         </section>
-        {this.state.listingsEndpoint ? 'Loading...' : `That's all the listings!`}
+        {this.state.listingsEndpoint ? <Loader setRef={this.setRef} /> : ''}
       </>
     )
   }
