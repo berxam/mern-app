@@ -1,10 +1,8 @@
-// Core modules
-const http = require('http')
-
-// Dependencies
+const { resolve } = require('path')
 const mongoose = require('mongoose')
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 require('dotenv').config()
 
 // Connect to database
@@ -15,25 +13,31 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
     process.exit(1)
   })
 
-// Create Express application and pass it as a handler to
-// the core HTTP server, so we can use it with Socket.io (later on)
 const app = express()
-const httpServer = http.createServer(app)
 
 // Middleware
-app.use(cors())
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
+app.use('/uploads', express.static(resolve(__dirname, '../uploads')))
 app.use(express.json())
+app.use(cookieParser())
+app.use((req, res, next) => {
+  req.fullUrl = `${req.protocol}://${
+    req.get('host') + req.baseUrl + req.path
+  }`
+  next()
+})
 
 // Bind routes
 app.use('/listings', require('./routes/listings'))
 app.use('/users', require('./routes/users'))
+app.use('/auth', require('./routes/auth'))
 
 // Start listening on address in .env or localhost:5000
-httpServer.listen(
+const server = app.listen(
   process.env.PORT || 5000,
   process.env.HOST || 'localhost',
   () => {
-    const { address, port } = httpServer.address()
+    const { address, port } = server.address()
     console.log(`Server running at \x1b[35m'http://${address}:${port}'\x1b[0m`)
   }
 )

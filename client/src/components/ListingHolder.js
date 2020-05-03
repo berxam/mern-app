@@ -7,10 +7,13 @@ export default class extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      listingsEndpoint: 'http://localhost:5000/listings?limit=8&page=0',
+      listingsEndpoint:
+        `http://localhost:5000/listings?limit=${props.limit || 12}&page=0`,
       listings: []
     }
-    this.instersectionObserver = new IntersectionObserver(this.intersectionHandler)
+    this.instersectionObserver = new IntersectionObserver(
+      this.intersectionHandler
+    )
   }
 
   componentWillUnmount () {
@@ -21,7 +24,7 @@ export default class extends Component {
     if (this.state.listingsEndpoint) {
       const response = await fetch(this.state.listingsEndpoint)
       const { data, next } = await response.json()
-  
+
       this.setState(state => ({
           listings: [...state.listings, ...data],
           listingsEndpoint: next
@@ -33,7 +36,11 @@ export default class extends Component {
 
   intersectionHandler = (entries) => {
     if (entries[0].isIntersecting) {
+    // entries.forEach(entry => {
+    //   if (entry.isIntersecting) {
+    //   if (entry.intersectionRatio > 0) {
       this.loadListings()
+    //})
     }
   }
 

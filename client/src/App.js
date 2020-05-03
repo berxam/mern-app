@@ -1,54 +1,40 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
+import ProtectedRoute from './components/ProtectedRoute'
+import { AuthProvider } from './components/AuthContext'
 import Navbar from './components/Navbar'
-import LandingPage from './components/LandingPage'
-import ListingHolder from './components/ListingHolder'
-import ListingDetails from './components/ListingDetails'
-import SignUpModal from './components/SignUpModal'
-import './styles/modal.scss'
-import './styles/forms.scss'
 
-export default class extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      modalIsOpen: false
-    }
-  }
-  
-  componentDidMount () {
-    document.addEventListener('mousedown', e => {
-      if (this.modalRef && !this.modalRef.contains(e.target)) {
-        this.closeModal()
-      }
-    })
-  }
+import LandingPage from './pages/LandingPage'
+import ListingPage from './pages/ListingPage'
+import CreateListingPage from './pages/CreateListingPage'
 
-  setModalRef = (ref) => {
-    this.modalRef = ref
-  }
+export default () => (
+  <Router>
+    <AuthProvider>
+      <Navbar />
 
-  openModal = () => {
-    this.setState({ modalIsOpen: true })
-  }
-
-  closeModal = () => {
-    this.setState({ modalIsOpen: false })
-  }
-
-  render () {
-    return (
-      <Router>
-        <Navbar openModal={this.openModal} />
+      <div className="wrap">
         <Switch>
           <Route path="/" exact component={LandingPage} />
-          <Route path="/listings" exact component={ListingHolder} />
-          <Route path="/listings/:id" component={ListingDetails} />
+          <Route path="/listings/:id" component={ListingPage} />
+          
+          {/*
+            <Route path="/users/:id" component={ProfilePage} />
+            <Route path="/search" component={SearchPage} />
+          */}
+
+          <ProtectedRoute
+            path="/create"
+            component={CreateListingPage}
+          />
+          <ProtectedRoute
+            path="/settings"
+            render={() => 'settings'}
+            /*component={SettingsPage}*/
+          />
         </Switch>
-        <div className={'modal-bg ' + (this.state.modalIsOpen ? 'active' : '')}>
-          <SignUpModal setRef={this.setModalRef} closeModal={this.closeModal} />
-        </div>
-      </Router>
-    )
-  }
-}
+      </div>
+    </AuthProvider>
+  </Router>
+)

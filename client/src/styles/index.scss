@@ -35,11 +35,10 @@ $breakpoints: (
 }
 
 .btn {
-  margin: .7em 0;
-  padding: .5em 1.5em;
+  margin: .7em;
+  padding: .8em 1.25em;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 1em;
   border: none;
   background-color: $white;
   color: $primary-color;
@@ -60,3 +59,55 @@ $breakpoints: (
   }
 }
 
+a {
+  color: $primary-color;
+
+  &:hover {
+    color: lighten($primary-color, 10%);
+  }
+}
+
+.notifs {
+  @media screen and (min-width: map-get($breakpoints, "s")) {
+    position: relative;
+  }
+
+  .expandable {
+    display: none;
+    position: absolute;
+    flex-direction: column;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    margin-top: 1rem;
+    background-color: $gray;
+    border-radius: 4px;
+
+    
+    @media screen and (min-width: map-get($breakpoints, "s")) {
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 400px;
+    }
+
+    &.active {
+      display: flex;
+      z-index: 999;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      width: 100%;
+      padding: .7rem;
+    }
+  }
+}
+
+img {
+  width: 100%;
+}

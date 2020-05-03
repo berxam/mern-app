@@ -1,12 +1,13 @@
 const { Schema, model } = require('mongoose')
 const { hash, compare } = require('bcryptjs')
 
+const { NotificationSchema } = require('./Notifications')
+
 const UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
-    lowercase: true
+    required: true
   },
   username: {
     type: String,
@@ -16,6 +17,22 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  refreshToken: String,
+  notifications: [NotificationSchema],
+  rating: {
+    positive: {
+      type: Number,
+      default: 0
+    },
+    negative: {
+      type: Number,
+      default: 0
+    }
+  },
+  verified: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: { createdAt: true }
@@ -23,6 +40,7 @@ const UserSchema = new Schema({
 
 // Hash the user's password before inserting a new user
 UserSchema.pre('save', async function (next) {
+  console.log('[UserSchema:save]')
   if (this.isModified('password') || this.isNew) {
     try {
       this.password = await hash(this.password, 12)

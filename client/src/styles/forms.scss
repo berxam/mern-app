@@ -1,18 +1,14 @@
-/**
- * Text inputs with animated "placeholder" labels.
- *
- * Requires a placeholder=" " to be set on the input,
- * and cannot have any other placeholder content.
- */
-.text-input {
-  $transition: .15s ease-in-out;
-  $padding: .7rem;
+$padding: .7rem;
+$transition: .15s ease-in-out;
 
-  position: relative;
+.file-input, .input-float-label {
   margin-top: 1.8em;
   margin-bottom: 1em;
   width: 100%;
+  position: relative;
+}
 
+.input-float-label {
   input {
     padding: $padding;
     font-size: 1em;
@@ -20,6 +16,10 @@
     border: 1px solid rgba(0,0,0,.2);
     width: 100%;
     
+    &::placeholder {
+      opacity: 0;
+    }
+
     // If the input is empty, show the label as a placeholder
     &:placeholder-shown + label {
       bottom: $padding;
@@ -28,8 +28,6 @@
     }
   }
 
-  // When the input has content or it's focused, move the label
-  // above the input, increase its opacity and make it smaller
   label, input:focus + label {
     pointer-events: none;
     position: absolute;
@@ -41,5 +39,39 @@
       bottom $transition,
       opacity $transition,
       font-size $transition;
+  }
+}
+
+.file-input {
+  padding: $padding;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,.2);
+  font-size: 1em;
+
+  [type="file"] {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+
+    &.hasFiles + label {
+      position: absolute;
+      left: $padding;
+      bottom: 105%;
+      opacity: 1;
+      font-size: .85em;
+      transition:
+        bottom $transition,
+        opacity $transition,
+        font-size $transition;
+    }
+  }
+
+  label {
+    pointer-events: none;
+    opacity: .7;
+    bottom: $padding;
   }
 }

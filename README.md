@@ -13,6 +13,8 @@ git clone https://github.com/berxam/mern-app.git
 # Install dependencies
 cd mern-app
 npm install
+cd client
+npm install
 ```
 
 
@@ -55,10 +57,6 @@ app
 ### Scripts
 
 Both packages have some [npm scripts](https://docs.npmjs.com/misc/scripts) set up for developing. Client has scripts set up by [create-react-app](https://create-react-app.dev/) and server has scripts set up by yours truly. Here are the server scripts:
-
-#### ```install```
-
-If you run ```npm install``` in the main package, which is the server, it will first install the main package dependencies and when it's finished, it automatically runs ```npm install --prefix client``` to install the clients dependencies aswell. This only applies when you install the dependencies of this project, not when you install new dependencies with ```npm i <pkg>```.
 
 #### ```dev```, ```server``` & ```client```
 

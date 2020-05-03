@@ -12,7 +12,7 @@
 @mixin createColumns($prefix, $columns: 12) {
   @for $i from 1 through $columns {
     .#{$prefix}#{$i} {
-      flex: 1 1 percentage($i / $columns);
+      flex: 0 1 percentage($i / $columns);
     }
   }
 }
