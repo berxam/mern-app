@@ -19,7 +19,7 @@ const ListingModel = require('../models/ListingModel')
 const { authenticate } = require('../middleware/auth')
 const paginateModel = require('../helpers/paginateModel')
 
-router.get('/', paginateModel(ListingModel, null, 'userId', 'createdAt'))
+router.get('/', paginateModel(ListingModel, null, 'creatorId', 'createdAt'))
 
 router.get('/:id', async (req, res) => {
   try {
