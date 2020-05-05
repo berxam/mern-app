@@ -40,8 +40,7 @@ export default class extends Component {
               <meta name="description" content={description} />
             </Helmet>
 
-            {images ? <img src={images[0]} /> : ''}
-            
+            {images.length ? <img src={images[0]} alt={title} /> : ''}
 
             <h1>{title}</h1>
             <p>{description}</p>

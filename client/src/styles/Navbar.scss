@@ -1,14 +1,29 @@
+@import '_variables';
+
 .navbar {
+  z-index: $z-navbar;
+  position: sticky;
+  top: 0;
+  background-color: fade-out($white, .1);
   width: 100%;
 
+  .logo {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    text-decoration: none;
+  }
+
   nav {
-    margin-left: auto;
+    width: 100%;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     padding: .6em;
-
-    a, .btn, .btn-primary {
-      margin: 0 .5em;
+    
+    div {
+      display: flex;
+      margin-left: auto;
     }
   }
 }

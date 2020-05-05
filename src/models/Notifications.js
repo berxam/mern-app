@@ -15,18 +15,14 @@ const NotificationSchema = new Schema({
   timestamps: { createdAt: true }
 })
 
-// This emitter is triggered when you call
-// const user = UserModel.findById(id)
-// user.notifications.push(notif)
-// user.save()
 const notifEmitter = new EventEmitter()
 
 NotificationSchema.pre('save', function (next) {
   if (this.isNew) {
     console.log('[NotificationSchema:save]', 'This notif saved to', this.parent()._id)
-    console.log(notifEmitter)
     notifEmitter.emit('newNotif', this, this.parent()._id)
   }
+
   next()
 })
 

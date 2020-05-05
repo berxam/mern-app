@@ -6,6 +6,7 @@ $transition: .15s ease-in-out;
   margin-bottom: 1em;
   width: 100%;
   position: relative;
+  background-color: white;
 }
 
 .input-float-label {
@@ -47,6 +48,7 @@ $transition: .15s ease-in-out;
   border-radius: 4px;
   border: 1px solid rgba(0,0,0,.2);
   font-size: 1em;
+  cursor: pointer;
 
   [type="file"] {
     width: 0.1px;

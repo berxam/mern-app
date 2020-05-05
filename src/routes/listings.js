@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 const ListingModel = require('../models/ListingModel')
+const { authenticate } = require('../middleware/auth')
 
 const paginateModel = async (model, req, res, filter = null, select = null) => {
   // Returns an integer if n is between min and max (inclusive), false otherwise
@@ -26,7 +27,7 @@ const paginateModel = async (model, req, res, filter = null, select = null) => {
   const page = isNumBetween(req.query.page, 0, Infinity) || 0
   const options = {
     limit: isNumBetween(req.query.limit, 1, 100) || 20,
-    sort: { createdAt: 'asc' }
+    sort: { createdAt: 'desc' }
   }
 
   options.skip = options.limit * page
@@ -84,8 +85,9 @@ router.post('/', upload.array('pics', 10), async (req, res) => {
     const images = []
     req.files.forEach(file => {
       const { filename, path } = file
-      const pos = filename.lastIndexOf('.')
-      const newName = filename.substr(0, pos < 0 ? filename.length : pos) + '.webp'
+      const extPos = filename.lastIndexOf('.')
+      const newName = `${new Date().toISOString()}_${
+        filename.substr(0, extPos < 0 ? filename.length : extPos)}.webp`
       const dest = resolve(UPLOADS_DIR, newName)
 
       images.push(new Promise((resolve, reject) => {
@@ -111,6 +113,7 @@ router.post('/', upload.array('pics', 10), async (req, res) => {
   }
 })
 
+// For updating listing values other than `offers`
 router.put('/:id', async (req, res) => {
   const _id = req.params.id
 
@@ -134,6 +137,24 @@ router.put('/:id', async (req, res) => {
       default:
         res.status(500).json(error)
     }
+  }
+})
+
+// For making an offer to a listing
+router.post('/:id/offer', authenticate, async (req, res) => {
+  try {
+    const listing = await ListingModel.findById(req.params.id)
+
+    listing.offers.push({
+      creatorId: req.user.id,
+      creatorListingId: req.body.listing
+    })
+
+    await listing.save()
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
   }
 })
 

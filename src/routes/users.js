@@ -4,25 +4,6 @@ const UserModel = require('../models/UserModel')
 const { notifEmitter } = require('../models/Notifications')
 const { authenticate, cookieAuth } = require('../middleware/auth')
 
-router.get('/test', authenticate, async (req, res) => {
-  console.log('GET /test')
-  try {
-    const user = await UserModel.findById(req.user.id)
-    console.log('User found')
-    user.notifications.push({
-      title: 'Well this happened'
-    })
-    notifEmitter.emit('new-notif', { title: 'ploahaha' }, req.user.id)
-    console.log('Notif added')
-    await user.save()
-    console.log('User saved')
-    res.sendStatus(200)
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500)
-  }
-})
-
 router.get('/:id', (req, res) => {
   // { username, rating }
 })
@@ -52,7 +33,10 @@ router.get('/:id/notifs', authenticate, async (req, res) => {
 
   try {
     const user = await UserModel.findById(req.params.id)
-    res.json(user.notifications)
+    const sortedNotifs = [...user.notifications].sort((a, b) => (
+      b.createdAt - a.createdAt
+    ))
+    res.json(sortedNotifs)
   } catch (err) {
     res.sendStatus(500)
   }
@@ -70,17 +54,15 @@ router.get('/:id/notifs/stream', cookieAuth, (req, res) => {
   res.write('retry: 10000\n\n')
 
   const writeToStream = (notif, id) => {
-    if (req.params.id === id) {
-      console.log('Sending event to client...')
+    if (req.user.id === id.toString()) {
       res.write(`data: ${JSON.stringify(notif)}\n\n`)
     }
   }
 
-  console.log('Listening for notifications...')
-  notifEmitter.addListener('new-notif', writeToStream)
+  notifEmitter.addListener('newNotif', writeToStream)
 
   res.on('close', () => {
-    notifEmitter.removeListener('new-notif', writeToStream)
+    notifEmitter.removeListener('newNotif', writeToStream)
     res.end()
   })
 })

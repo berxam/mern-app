@@ -1,0 +1,24 @@
+/**
+ * Colors
+ */
+$primary-color: #0b9c48;
+$white: #fafafa;
+$gray: #ececec;
+
+/**
+ * Grid
+ * Doesn't include "d" since it gets styles from global scope
+ */
+$breakpoints: (
+  "s": 520px,
+  "m": 768px,
+  "l": 1024px,
+  "x": 1366px
+);
+
+/**
+ * Z-indexes
+ */
+$z-modalBg: 9999;
+$z-navbar: 999;
+$z-notifs: 99;

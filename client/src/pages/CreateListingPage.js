@@ -45,6 +45,9 @@ export default class extends Component {
             name="pics"
             multiple
           />
+          <input type="hidden" name="creatorId" value={
+            JSON.parse(localStorage.getItem('jid')).id
+          } />
 
           {this.state.submitting
             ? <Loader />

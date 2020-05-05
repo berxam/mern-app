@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
+import { Link } from 'react-router-dom'
+
+import IconButton from './IconButton'
+import '../styles/Notifications.scss'
 
 const NotificationPanel = (props) => {
   return (
@@ -8,11 +12,12 @@ const NotificationPanel = (props) => {
       className={'expandable' + (props.open ? ' active' : '')}
     >
       <ul>
-        {props.notifications.map(notif => (
-          <li
-            key={notif._id}
-          >
-            {notif.title}
+        {props.notifications.map((notif, idx) => (
+          <li key={idx}>
+            <Link to={`/listings/${notif.listingId}`}>
+              {notif.title}
+              {/*<span>{notif.createdAt}</span>*/}
+            </Link>
           </li>
         ))}
       </ul>
@@ -24,12 +29,7 @@ export default class NotificationButton extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      notifications: [
-        {_id: 1, title: 'Joku teki jottaii jossai'},
-        {_id: 2, title: 'Joku teki jottaii jossai'},
-        {_id: 3, title: 'Joku teki jottaii jossai'},
-        {_id: 4, title: 'Joku teki jottaii jossai'}
-      ],
+      notifications: [],
       panelIsOpen: false
     }
   }
@@ -68,6 +68,22 @@ export default class NotificationButton extends Component {
       this.notifStream.close()
     }
   }
+
+  componentDidUpdate () {
+    if (this.state.panelIsOpen && this.getUnreadNotifs().length) {
+      this.setState(({ notifications }) => ({
+        notifications: notifications.map(notif => {
+          // this update should also be saved to database!!!
+          if (notif.isUnseen) notif.isUnseen = false
+          return notif
+        })
+      }))
+    }
+  }
+
+  getUnreadNotifs = () => {
+    return this.state.notifications.filter(notif => notif.isUnseen)
+  }
   
   onNewNotif = (messageEvent) => {
     console.log('Got new notification!')
@@ -77,25 +93,24 @@ export default class NotificationButton extends Component {
     }))
   }
 
-  // todo:
-  // - bell icon
-  // - red ball to corner with unreadNotifsAmount
   render () {
+    const unreadNotifs = this.getUnreadNotifs().length
+
     return (
       <div className="notifs">
         <Helmet
-          titleTemplate={this.state.notifications.length
-            ? `(${this.state.notifications.length}) %s`
-            : '%s'}
+          titleTemplate={unreadNotifs ? `(${unreadNotifs}) %s` : '%s'}
         />
-        <button
-          id="notifications"
+
+        <IconButton
+          onClick={() => this.setState(({ panelIsOpen }) => ({ panelIsOpen: !panelIsOpen }))}
+          label="Notifs"
+          icon="alarm"
           aria-haspopup="true"
           aria-expanded={this.state.panelIsOpen}
-          onClick={() => this.setState(({ panelIsOpen }) => ({ panelIsOpen: !panelIsOpen }))}
-        >
-          Notifs
-        </button>
+          id="notifications"
+          {...(() => unreadNotifs && { 'data-notifs': unreadNotifs })()}
+        />
         <NotificationPanel
           open={this.state.panelIsOpen}
           notifications={this.state.notifications}

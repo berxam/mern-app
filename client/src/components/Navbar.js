@@ -5,6 +5,7 @@ import SignUpForm from './SignUpForm'
 import LoginForm from './LoginForm'
 import Modal from './Modal'
 import NotificationButton from './Notifications'
+import IconButton from './IconButton'
 
 import { AuthContext } from './AuthContext'
 
@@ -32,33 +33,37 @@ export default class extends Component {
             <header className="navbar">
               <div className="wrap">
                 <nav>
-                  <Link to="/">Home</Link>
+                  <Link to="/" className="logo">Vaihtokauppa</Link>
 
                   {context.isAuthenticated ? (
-                    <>
+                    <div>
                       <NotificationButton />
-                      <Link to="/create">Create new</Link>
-                      <button
+                      <IconButton
+                        to="/create"
+                        label="Create"
+                        title="Create new listing"
+                        icon="edit-1"
+                      />
+                      <IconButton
                         onClick={() => context.logout()}
-                        className="btn">
-                        Log out
-                        {/* Change this button into a user icon,
-                        which drops down Profile, Settings, Log out */}
-                      </button>
-                    </>
+                        label={JSON.parse(localStorage.getItem('jid')).username}
+                        title="Should drop down links to profile, settings, log out"
+                        icon="user-2"
+                      />
+                    </div>
                   ) : (
-                    <>
-                      <button
+                    <div>
+                      <IconButton
                         onClick={() => this.openSignupModal()}
-                        className="btn-primary">
-                        Sign up
-                      </button>
-                      <button
+                        label="Sign up"
+                        icon="mail"
+                      />
+                      <IconButton
                         onClick={() => this.openLoginModal()}
-                        className="btn">
-                        Sign in
-                      </button>
-                    </>
+                        label="Sign in"
+                        icon="padlock"
+                      />
+                    </div>
                   )}
                 </nav>
               </div>

@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
     return res.sendStatus(401)
   }
 
-  const payload = { id: user._id }
+  const payload = { id: user._id, username: user.username }
   const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET, { expiresIn: '7d' })
   const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET, { expiresIn: '15m' })
 
