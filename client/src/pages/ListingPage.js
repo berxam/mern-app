@@ -3,6 +3,10 @@ import { Helmet } from 'react-helmet'
 
 import Offers from '../components/Offers'
 import Loader from '../components/Loader'
+import OfferForm from '../components/OfferForm'
+import IconButton from '../components/IconButton'
+import Modal from '../components/Modal'
+import { AuthContext } from '../components/AuthContext'
 
 export default class extends Component {
   constructor (props) {
@@ -45,6 +49,24 @@ export default class extends Component {
 
             <h1>{title}</h1>
             <p>{description}</p>
+
+            <AuthContext.Consumer>
+              {context => {
+                return context.isAuthenticated ? (
+                  <>
+                    <h2>Tee tarjous</h2>
+                    <Modal setOpener={open => this.openOfferForm = open}>
+                      <OfferForm phid={this.props.match.params.id}/>
+                    </Modal>
+                    <IconButton
+                      onClick={() => this.openOfferForm()}
+                      label="Tee tarjous"
+                      icon="paper-plane-1"
+                    />
+                  </>
+                ) : null
+              }}
+            </AuthContext.Consumer>
 
             <h2>Tarjoukset</h2>
             {offers.length ? <Offers offers={offers} /> : 'Ei tarjouksia'}
