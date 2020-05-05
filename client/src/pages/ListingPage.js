@@ -56,7 +56,7 @@ export default class extends Component {
                   <>
                     <h2>Tee tarjous</h2>
                     <Modal setOpener={open => this.openOfferForm = open}>
-                      <OfferForm phid={this.props.match.params.id}/>
+                      <OfferForm listingId={this.props.match.params.id}/>
                     </Modal>
                     <IconButton
                       onClick={() => this.openOfferForm()}

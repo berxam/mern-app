@@ -17,7 +17,13 @@ export default (url, init = null) => {
   }
 
   if (init !== null) {
-    options = { ...options, ...init }
+    const { headers, ...rest } = init
+    
+    if (headers) {
+      options.headers = { ...options.headers, ...headers }
+    }
+
+    options = { ...options, ...rest }
   }
 
   return fetch(url, options)
