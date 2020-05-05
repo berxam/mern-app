@@ -6,6 +6,8 @@ import ListingHolder from '../components/ListingHolder'
 import ListingData from './ListingData'
 import fetchWithAuth from '../helpers/fetchWithAuth'
 
+import getUser from '../helpers/getUser'
+
 export default class extends Component {
 
   constructor (props) {
@@ -44,7 +46,7 @@ export default class extends Component {
   render () {
     return (
       <Form onSubmit={this.submit}>
-          <ListingHolder>
+          <ListingHolder options={{ creatorId: getUser().id }}>
           {({ _id, ...rest }) => (
             <ListingData key={_id} id={_id} {...rest} onClick={() => this.setState({offer: _id, creatorId: rest.creatorId })}/>
           )}
