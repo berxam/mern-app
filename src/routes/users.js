@@ -9,27 +9,17 @@ router.get('/:id', (req, res) => {
 })
 
 router.put('/:id', authenticate, (req, res) => {
-  console.log('in here')
-
-  if (req.user.id !== req.params.id) {
-    return res.sendStatus(403)
-  }
-
-  console.log('hello')
+  if (req.user.id !== req.params.id) return res.sendStatus(403)
+  // TO DO: update user
 })
 
 router.delete('/:id', authenticate, (req, res) => {
-  if (req.user.id !== req.params.id) {
-    return res.sendStatus(403)
-  }
-
-  console.log('hello')
+  if (req.user.id !== req.params.id) return res.sendStatus(403)
+  // TO DO: delete user & all listings with userId
 })
 
 router.get('/:id/notifs', authenticate, async (req, res) => {
-  if (req.user.id !== req.params.id) {
-    return res.sendStatus(403)
-  }
+  if (req.user.id !== req.params.id) return res.sendStatus(403)
 
   try {
     const user = await UserModel.findById(req.params.id)
@@ -65,6 +55,26 @@ router.get('/:id/notifs/stream', cookieAuth, (req, res) => {
     notifEmitter.removeListener('newNotif', writeToStream)
     res.end()
   })
+})
+
+router.put('/:id/notifs/mark-read', authenticate, async (req, res) => {
+  if (req.user.id !== req.params.id) return res.sendStatus(403)
+
+  try {
+    const user = await UserModel.findById(req.params.id)
+    const allRead = user.notifications.map(notif => {
+      if (notif.isUnseen) {
+        notif.isUnseen = false
+      }
+
+      return notif
+    })
+    user.notifications = allRead
+    await user.save()
+    res.sendStatus(200)
+  } catch (err) {
+    res.sendStatus(500)
+  }
 })
 
 module.exports = router

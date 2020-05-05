@@ -71,13 +71,7 @@ export default class NotificationButton extends Component {
 
   componentDidUpdate () {
     if (this.state.panelIsOpen && this.getUnreadNotifs().length) {
-      this.setState(({ notifications }) => ({
-        notifications: notifications.map(notif => {
-          // this update should also be saved to database!!!
-          if (notif.isUnseen) notif.isUnseen = false
-          return notif
-        })
-      }))
+      this.markNotifsAsSeen()
     }
   }
 
@@ -91,6 +85,35 @@ export default class NotificationButton extends Component {
     this.setState(state => ({
       notifications: [...state.notifications, notif]
     }))
+  }
+
+  markNotifsAsSeen = async () => {
+    const notifications = this.state.notifications.map(notif => {
+      if (notif.isUnseen) notif.isUnseen = false
+      return notif
+    })
+    this.setState({ notifications })
+    const user = JSON.parse(localStorage.getItem('jid'))
+    const url = `http://localhost:5000/users/${user.id}/notifs/mark-read`
+    const init = {
+      method: 'PUT',
+      headers: {
+        authorization: `Bearer ${user.accessToken}`
+      },
+      credentials: 'include'
+    }
+
+    try {
+      const response = await fetch(url, init)
+      
+      if (response.ok) {
+        console.log('Notifs marked as seen!')
+      } else {
+        console.error('Something went wrong', response)
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   render () {

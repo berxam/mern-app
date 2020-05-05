@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
-import ListingPreview from './ListingPreview'
 import Loader from './Loader'
+import createUrl from '../helpers/createUrl'
 import '../styles/ListingHolder.scss'
 
 export default class extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      listingsEndpoint:
-        `http://localhost:5000/listings?limit=${props.limit || 12}&page=0`,
+      listingsEndpoint: createUrl('/listings', {
+        limit: props.limit || 12,
+        page: 0,
+        ...props.options
+      }),
       listings: []
     }
-    this.instersectionObserver = new IntersectionObserver(
-      this.intersectionHandler
-    )
+    this.instersectionObserver = new IntersectionObserver(this.intersectionHandler)
   }
 
   componentWillUnmount () {
@@ -35,13 +36,7 @@ export default class extends Component {
   }
 
   intersectionHandler = (entries) => {
-    if (entries[0].isIntersecting) {
-    // entries.forEach(entry => {
-    //   if (entry.isIntersecting) {
-    //   if (entry.intersectionRatio > 0) {
-      this.loadListings()
-    //})
-    }
+    if (entries[0].isIntersecting) this.loadListings()
   }
 
   setRef = (ref) => {
@@ -56,12 +51,11 @@ export default class extends Component {
     return (
       <>
         <section className="ListingHolder">
-          {/*this.state.listings.map(({ _id, ...rest }) => (
-            <ListingPreview key={_id} id={_id} {...rest} />
-          ))*/}
 
           {this.state.listings.map(this.props.children)}
+
         </section>
+
         {this.state.listingsEndpoint ? <Loader setRef={this.setRef} /> : ''}
       </>
     )

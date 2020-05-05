@@ -11,6 +11,12 @@ const isNumBetween = (n, min, max) => {
   return !isNaN(int) && n >= min && n <= max && int
 }
 
+/**
+ * Checks wether object is empty (has no own properties).
+ *
+ * @param {Object} object Object to check.
+ * @returns {Boolean} True if has no own properties
+ */
 const objectIsEmpty = (object) => {
   for (const prop in object) {
     if (Object.prototype.hasOwnProperty.call(object, prop)) {
@@ -60,15 +66,16 @@ module.exports = (model, select = null, exposedFilters = null, exposedSortingFie
 
     const options = {
       limit: isNumBetween(limit, 1, 100) || 20,
-      sort: exposedSortingFields.includes(sortBy)
+      sort: sortBy && exposedSortingFields.includes(sortBy)
         ? { [sortBy]: asc ? 'asc' : 'desc' }
-        : { createdAt: 'desc' }
+        : { createdAt: asc ? 'asc' : 'desc' }
     }
 
     page = isNumBetween(page, 0, Infinity) || 0
     options.skip = options.limit * page
 
     try {
+      const baseUrl = new URL(req.fullUrl)
       let numberOfDocuments, documents
 
       if (exposedFilters && queryFilters) {
@@ -77,6 +84,9 @@ module.exports = (model, select = null, exposedFilters = null, exposedSortingFie
         if (!objectIsEmpty(actualFilters)) {
           numberOfDocuments = await model.countDocuments(actualFilters)
           documents = await model.find(actualFilters, select, options)
+          Array.prototype.forEach.call(actualFilters, (val, key) => {
+            baseUrl.searchParams.append(key, val)
+          })
         }
       }
 
@@ -85,8 +95,10 @@ module.exports = (model, select = null, exposedFilters = null, exposedSortingFie
         documents = await model.find({}, select, options)
       }
 
-      const baseUrl = `${req.fullUrl}?limit=${options.limit}`
       const nextPageIsEmpty = numberOfDocuments < options.limit * (page + 1)
+      baseUrl.searchParams.append('limit', options.limit)
+      baseUrl.searchParams.append('sortBy', Object.keys(options.sort)[0])
+      baseUrl.searchParams.append('asc', asc)
 
       res.json({
         count: numberOfDocuments,
