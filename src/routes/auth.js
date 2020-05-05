@@ -64,14 +64,14 @@ router.get('/refresh', async (req, res) => {
   console.log('[/auth/refresh]', 'Got refreshtoken, trying to verify...')
 
   try {
-    const { id } = jwt.verify(refreshToken, process.env.REFRESH_SECRET)
+    const { id, username } = jwt.verify(refreshToken, process.env.REFRESH_SECRET)
     console.log('[/auth/refresh]', 'Verified! Look for it in database...')
     const tokenInDatabase = await RefreshTokenModel.findOne({ token: refreshToken })
 
     if (tokenInDatabase) {
       if (tokenInDatabase.isValid) {
-        const accessToken = jwt.sign({ id }, process.env.ACCESS_SECRET, { expiresIn: '15m' })
-        const refreshToken = jwt.sign({ id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
+        const accessToken = jwt.sign({ id, username }, process.env.ACCESS_SECRET, { expiresIn: '15m' })
+        const refreshToken = jwt.sign({ id, username }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
 
         await new RefreshTokenModel({ token: refreshToken, isValid: true })
           .save()
