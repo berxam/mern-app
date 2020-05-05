@@ -56,9 +56,11 @@ export default class extends Component {
     return (
       <>
         <section className="ListingHolder">
-          {this.state.listings.map(({ _id, ...rest }) => (
+          {/*this.state.listings.map(({ _id, ...rest }) => (
             <ListingPreview key={_id} id={_id} {...rest} />
-          ))}
+          ))*/}
+
+          {this.state.listings.map(this.props.children)}
         </section>
         {this.state.listingsEndpoint ? <Loader setRef={this.setRef} /> : ''}
       </>

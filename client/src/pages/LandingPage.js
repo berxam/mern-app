@@ -2,6 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 
 import ListingHolder from '../components/ListingHolder'
+import ListingPreview from '../components/ListingPreview'
 import '../styles/LandingPage.scss'
 
 export default () => {
@@ -24,7 +25,11 @@ export default () => {
       </main>
       <div className="d12">
         <h2>Viimeisimmät listaukset</h2>
-        <ListingHolder />
+        <ListingHolder>
+          {({ _id, ...rest }) => (
+            <ListingPreview key={_id} id={_id} {...rest} />
+          )}
+        </ListingHolder>
       </div>
     </>
   )
