@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
+import Offers from '../components/Offers'
 import Loader from '../components/Loader'
 
 export default class extends Component {
@@ -21,7 +22,7 @@ export default class extends Component {
         this.props.match.params.id
       }`)
       const listing = await response.json()
-  
+      console.log(listing)
       this.setState({ listing })
     } catch (error) {
       console.error('[ListingPage:loadListing]', error)
@@ -29,7 +30,7 @@ export default class extends Component {
   }
 
   render () {
-    const { title, description, images } = this.state.listing
+    const { title, description, images , offers} = this.state.listing
 
     return (
       <main>
@@ -46,6 +47,7 @@ export default class extends Component {
             <p>{description}</p>
 
             <h2>Tarjoukset</h2>
+            {offers.length ? <Offers offers={offers} /> : 'Ei tarjouksia'}
           </>
         ) : <Loader />}
       </main>
