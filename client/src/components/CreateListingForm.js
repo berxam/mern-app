@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import Form from '../components/Form'
 import TextInput from '../components/TextInput'
+import TextArea from '../components/TextArea'
 import FileInput from '../components/FileInput'
 import Loader from '../components/Loader'
 export default class extends Component {
@@ -28,7 +29,7 @@ export default class extends Component {
             label="Product or service name" id="create_title" name="title"
             required
             />
-          <TextInput
+          <TextArea
             label="Description" id="create_description" name="description"
             required
             />

@@ -38,25 +38,30 @@ const UserSchema = new Schema({
   timestamps: { createdAt: true }
 })
 
-// Hash the user's password before inserting a new user
 UserSchema.pre('save', async function (next) {
-  console.log('[UserSchema:save]')
-  if (this.isModified('password') || this.isNew) {
+  if (this.isModified('email') || this.isNew) {
     try {
-      this.password = await hash(this.password, 12)
-      next()
+      // Send email confirmation message
+
     } catch (err) {
       next(err)
     }
-  } else {
-    next()
   }
+
+  if (this.isModified('password') || this.isNew) {
+    try {
+      this.password = await hash(this.password, 12)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  next()
 })
 
 // Compare password input to password saved in database
 UserSchema.methods.comparePassword = async function (password) {
-  const res = await compare(password, this.password)
-  return res
+  return compare(password, this.password)
 }
 
 module.exports = model('users', UserSchema)

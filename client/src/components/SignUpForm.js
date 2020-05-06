@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import Form from './Form'
 import TextInput from './TextInput'
 import Loader from './Loader'
+import createUrl from '../helpers/createUrl'
 
 export default class extends Component {
   constructor (props) {
@@ -32,7 +33,7 @@ export default class extends Component {
       <>
         <h2>Sign up</h2>
         <Form
-          url="http://localhost:5000/auth/register"
+          url={createUrl('/users')}
           method="POST"
           setLoader={() => this.setState({ submitting: true })}
           onSuccess={this.onSuccess}

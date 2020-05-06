@@ -54,7 +54,7 @@ export default class extends Component {
   }
 
   render () {
-    const { title, description, images, offers } = this.state.listing
+    const { title, description, images, offers, creatorId } = this.state.listing
 
     return (
       <main>
@@ -65,35 +65,46 @@ export default class extends Component {
               <meta name="description" content={description} />
             </Helmet>
 
-            {images.length ? <Image src={images[0]} alt={title} /> : null}
+            <div className="row">
+              <section className="d12 m8">
+                {images.length ? <Image src={images[0]} alt={title} /> : null}
 
-            <h1>{title}</h1>
-            <p>{description}</p>
-
-            {!this.state.listing.notFound && (
-              <section>
-                <header className="offer-container-header">
-                  <h2>Tarjoukset</h2>
-                  <AuthContext.Consumer>
-                    {context => {
-                      return context.isAuthenticated ? (
-                        <>
-                          <Modal setOpener={open => this.openOfferForm = open}>
-                            <OfferForm listingId={this.props.match.params.id}/>
-                          </Modal>
-                          <IconButton
-                            onClick={() => this.openOfferForm()}
-                            label="Tee tarjous"
-                            icon="paper-plane-1"
-                          />
-                        </>
-                      ) : null
-                    }}
-                  </AuthContext.Consumer>
-                </header>
-                {offers.length ? <Offers offers={offers} /> : 'Ei tarjouksia'}
+                <h1>{title}</h1>
+                <p>{description}</p>
               </section>
-            )}
+              <section className="d12 m4">
+                <h2>Käyttäjän tiedot</h2>
+              </section>
+            </div>
+
+            <div className="row">
+              {!this.state.listing.notFound && (
+                <section className="d12 m8">
+                  <header className="offer-container-header">
+                    <h2>Tarjoukset</h2>
+                    <AuthContext.Consumer>
+                      {context => {
+                        return context.isAuthenticated ? (
+                          <>
+                            <Modal setOpener={open => this.openOfferForm = open}>
+                              <OfferForm listingId={this.props.match.params.id}/>
+                            </Modal>
+                            <IconButton
+                              onClick={() => this.openOfferForm()}
+                              label="Tee tarjous"
+                              icon="paper-plane-1"
+                            />
+                          </>
+                        ) : null
+                      }}
+                    </AuthContext.Consumer>
+                  </header>
+                  {offers.length ?
+                    <Offers offers={offers} listingCreator={creatorId} />
+                    : 'Ei tarjouksia'}
+                </section>
+              )}
+            </div>
           </>
         ) : <Loader />}
       </main>

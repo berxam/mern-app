@@ -5,25 +5,6 @@ const RefreshTokenModel = require('../models/RefreshTokenModel')
 const UserModel = require('../models/UserModel')
 const { authenticate } = require('../middleware/auth')
 
-router.post('/register', async (req, res) => {
-  const { email, username, password } = req.body
-
-  console.log(req.body)
-
-  if (!email || !username || !password) {
-    return res.sendStatus(422)
-  }
-
-  const newUser = new UserModel({ email, username, password })
-
-  try {
-    await newUser.save()
-    res.sendStatus(201)
-  } catch (error) {
-    res.status(400).json(error)
-  }
-})
-
 // add remember me functionality!!!!
 router.post('/login', async (req, res) => {
   const { email, password } = req.body

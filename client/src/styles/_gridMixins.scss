@@ -1,3 +1,4 @@
+
 /**
  * Generates grid classes that use flexbox.
  *
@@ -10,8 +11,18 @@
  * @param {int}    $columns Amount of columns. Optional, defaults to 12.
  */
 @mixin createColumns($prefix, $columns: 12) {
+  .col {
+    display: flex;
+    flex-direction: column;
+    padding: .3rem;
+  }
+
   @for $i from 1 through $columns {
     .#{$prefix}#{$i} {
+      @if $prefix == d {
+        @extend .col;
+      }
+
       flex: 0 1 percentage($i / $columns);
     }
   }

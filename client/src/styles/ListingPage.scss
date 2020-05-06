@@ -1,5 +1,19 @@
+main {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 .offer-container-header {
   display: flex;
+  align-items: flex-end;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+
+  h2 {
+    margin-bottom: 0;
+  }
 
   button {
     margin-left: auto;

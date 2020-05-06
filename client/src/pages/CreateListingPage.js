@@ -7,13 +7,15 @@ import CreateListingForm from '../components/CreateListingForm'
 export default class extends Component {
   render () { 
     return (
-      <main className="d12">
+      <main className="row">
         <Helmet>
           <title>Create listing</title>
         </Helmet>
 
-        <h1>Create listing</h1>
+        <div className="d12">
+          <h1>Create listing</h1>
           <CreateListingForm />
+        </div>
       </main>
     )
   }

@@ -19,6 +19,19 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+router.post('/', async (req, res) => {
+  const { email, username, password } = req.body
+
+  const newUser = new UserModel({ email, username, password })
+
+  try {
+    await newUser.save()
+    res.sendStatus(201)
+  } catch (error) {
+    res.status(400).json(error)
+  }
+})
+
 router.put('/:id', authenticate, (req, res) => {
   if (req.user.id !== req.params.id) return res.sendStatus(403)
   // TO DO: update user

@@ -7,14 +7,23 @@
 }
 
 .listingPreview {
+    //display: flex;
+    //flex-direction: column;
+    
+    
     img {
-        max-height: 160px;
+        max-height: 200px;
         object-fit: cover;
     }
-    p {
-        padding: .7rem 0;
+    h1 {
+        font-size: 1.3rem;
     }
+    p {
+        padding: .2em 0;
+    }
+
     .btn-primary {
+        width: fit-content;
         font-size: .75rem;
     }
 }

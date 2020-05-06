@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 
+import { AuthContext } from '../components/AuthContext'
 import createUrl from '../helpers/createUrl'
 import '../styles/Offers.scss'
+import getUser from '../helpers/getUser'
+import fetchWithAuth from '../helpers/fetchWithAuth'
 
-class Offer extends Component {
+class RealOffer extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -32,8 +35,29 @@ class Offer extends Component {
     }
   }
 
+  setAccept = async (value) => {
+    const url = createUrl(`/listings/${
+      this.props.location.pathname.split('/')[2]
+    }/offers/${this.props._id}`)
+
+    try {
+      const res = await fetchWithAuth(url, {
+        method: 'PUT',
+        body: JSON.stringify({ accepted: value })
+      })
+
+      if (res.ok) {
+        console.log(`Offer ${value ? 'accepted' : 'rejected'}`)
+      } else {
+        console.error(res)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   render () {
-    const { creatorId, creatorListingId } = this.props
+    const { creatorId, creatorListingId, listingCreator } = this.props
     const { username, listingName } = this.state
 
     return (
@@ -46,23 +70,36 @@ class Offer extends Component {
           </Link>
         </span>
 
-        <div>
-          <button
-            onClick={() => this.setAccept(true)}
-            className="btn-primary"
-          >Hyväksy</button>
-          <button
-            onClick={() => this.setAccept(false)}
-            className="btn"
-          >Hylkää</button>
-        </div>
+        <AuthContext.Consumer>
+          {context => {
+            if (!context.isAuthenticated) return null
+            if (getUser().id !== listingCreator) return null
+
+            return (
+              <div>
+                <button
+                  onClick={() => this.setAccept(true)}
+                  className="btn-primary"
+                >Hyväksy</button>
+                <button
+                  onClick={() => this.setAccept(false)}
+                  className="btn"
+                >Hylkää</button>
+              </div>
+            )
+          }}
+        </AuthContext.Consumer>
       </li>
     )
   }
 }
 
+const Offer = withRouter(props => <RealOffer {...props} />)
+
 export default (props) => (
   <ul>
-    {props.offers.map((offer) => <Offer key={offer._id} {...offer} />)}
+    {props.offers.map((offer) => (
+      <Offer key={offer._id} listingCreator={props.listingCreator} {...offer} />
+    ))}
   </ul>
 )

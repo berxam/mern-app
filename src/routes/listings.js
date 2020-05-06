@@ -89,8 +89,9 @@ router.post('/:id/offer', authenticate, async (req, res) => {
   }
 })
 
+// THIS THROWS 500 EVERY TIME, MONGOOSE ISSUE: Cast to ObjectID failed
 // Accepting/rejecting offers
-router.put('/:id/offer/:offerId', authenticate, async (req, res) => {
+router.put('/:id/offers/:offerId', authenticate, async (req, res) => {
   try {
     const listing = await ListingModel.findById(req.params.id)
     const offer = listing.offers.pull({ _id: req.params.offerId })

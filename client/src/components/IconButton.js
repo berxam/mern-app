@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 
 import '../styles/iconButtons.scss'
 
-export default ({ to, icon, label, title, ...rest }) => {
+export default ({ to, icon, label, title, className, ...rest }) => {
   if (to) {
     return (
       <Link
         to={to}
-        className="nav-btn"
+        className={"nav-btn " + className || ''}
         title={title || label}
       >
         <i className={"icon-" + icon}></i>
@@ -19,7 +19,7 @@ export default ({ to, icon, label, title, ...rest }) => {
   else {
     return (
       <button
-        className="nav-btn"
+        className={"nav-btn " + className || ''}
         title={title || label}
         {...rest}
       >
