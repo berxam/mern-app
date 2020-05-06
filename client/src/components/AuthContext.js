@@ -1,11 +1,14 @@
 import React, { Component, createContext } from 'react'
 import jwtDecode from 'jwt-decode'
 
+import getUser from '../helpers/getUser'
+import createUrl from '../helpers/createUrl'
+import fetchWithAuth from '../helpers/fetchWithAuth'
+
 export const AuthContext = createContext({
   isAuthenticated: false,
   login: () => {},
-  logout: () => {},
-  refresh: () => {}
+  logout: () => {}
 })
 
 export class AuthProvider extends Component {
@@ -19,13 +22,12 @@ export class AuthProvider extends Component {
   }
 
   componentDidMount () {
-    const jid = localStorage.getItem('jid')
+    const user = getUser()
 
-    if (jid !== null) {
-      const { accessToken } = JSON.parse(jid)
-      console.log('[AuthProvider:didMount]', 'Found accesstoken in localStorage')
-      const success = this.setAccessToken(accessToken)
-      if (!success) this.refresh()
+    if (user !== null) {
+      if (!this.setAccessToken(user.accessToken)) {
+        this.refresh()
+      }
     }
   }
 
@@ -34,21 +36,20 @@ export class AuthProvider extends Component {
   }
 
   login = async (formData) => {
-    console.log('[login]', 'Trying to log in with body', formData)
+    const url = createUrl('/auth/login')
 
     try {
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch(url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include',
         body: JSON.stringify(formData)
       })
 
       if (response.ok) {
         const { accessToken } = await response.json()
-        console.log('[login]', 'Got accesstoken:', accessToken)
         return this.setAccessToken(accessToken)
       } else {
         console.error('[login]', 'Something went wrong')
@@ -61,14 +62,11 @@ export class AuthProvider extends Component {
   }
 
   logout = async () => {
+    const url = createUrl('/auth/logout')
+
     try {
-      const response = await fetch('http://localhost:5000/auth/logout', {
-        credentials: 'include',
-        headers: {
-          authorization: `Bearer ${
-            JSON.parse(localStorage.getItem('jid')).accessToken
-          }`
-        }
+      const response = await fetchWithAuth(url, {
+        method: 'DELETE'
       })
 
       switch (response.status) {
@@ -76,10 +74,10 @@ export class AuthProvider extends Component {
           console.log('[logout]', 'Refresh token is now invalidated.')
           break
         case 401:
-          console.log('[logout]', 'Invalid or empty refresh token sent.')
+          console.error('[logout]', 'Invalid or empty refresh token sent.')
           break
         case 403:
-          console.log('[logout]', 'Refresh token was already invalidated.')
+          console.error('[logout]', 'Refresh token was already invalidated.')
           break
         default:
           console.error('[logout]', 'Something went wrong with the request')
@@ -88,14 +86,11 @@ export class AuthProvider extends Component {
       console.error('[logout]', err)
     }
 
-    localStorage.removeItem('jid')
-    this.setState({ isAuthenticated: false })
-    clearTimeout(this.refreshTimeout)
+    this.removeAccess()
   }
 
   refresh = async () => {
     try {
-      console.log('[refresh]', 'Refreshing tokens...')
       const response = await fetch('http://localhost:5000/auth/refresh', {
         credentials: 'include'
       })
@@ -103,7 +98,6 @@ export class AuthProvider extends Component {
       if (response.ok) {
         const { accessToken } = await response.json()
         this.setAccessToken(accessToken)
-        console.log('[refresh]', 'Got new accesstoken:', accessToken)
       } else {
         this.setState({ isAuthenticated: false })
         console.error('[refresh]', 'Something went wrong')
@@ -120,25 +114,24 @@ export class AuthProvider extends Component {
     const today = new Date()
     const toExpire = expiresAt - today
 
-    console.log('[setAccessToken]', 'Saving token to state & storage...')
-    console.log('[setAccessToken]', 'Token expires in', toExpire + 'ms')
-    console.log('Today', today)
-
     if (toExpire <= 0) {
-      console.error('[setAccessToken]', `The token has expired at ${expiresAt}, so we're no longer authenticated.`)
-      localStorage.removeItem('jid')
-      this.setState({ isAuthenticated: false })
-      clearTimeout(this.refreshTimeout)
+      this.removeAccess()
       return false
     }
 
     localStorage.setItem('jid', JSON.stringify({ id, accessToken, username }))
     this.setState({ isAuthenticated: true })
+
     clearTimeout(this.refreshTimeout)
     this.refreshTimeout = setTimeout(this.refresh, toExpire)
-    console.log('[setAccessToken]', 'Saved! Next refresh at ' + expiresAt)
 
     return true
+  }
+
+  removeAccess = () => {
+    localStorage.removeItem('jid')
+    this.setState({ isAuthenticated: false })
+    clearTimeout(this.refreshTimeout)
   }
 
   render () {
@@ -147,8 +140,7 @@ export class AuthProvider extends Component {
         value={{
           isAuthenticated: this.state.isAuthenticated,
           login: this.login,
-          logout: this.logout,
-          refresh: this.refresh
+          logout: this.logout
         }}
       >
         { this.props.children }

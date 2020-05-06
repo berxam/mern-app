@@ -6,6 +6,7 @@ import Loader from '../components/Loader'
 import OfferForm from '../components/OfferForm'
 import IconButton from '../components/IconButton'
 import Modal from '../components/Modal'
+import Image from '../components/Image'
 import { AuthContext } from '../components/AuthContext'
 
 export default class extends Component {
@@ -34,7 +35,7 @@ export default class extends Component {
   }
 
   render () {
-    const { title, description, images , offers} = this.state.listing
+    const { title, description, images, offers } = this.state.listing
 
     return (
       <main>
@@ -45,7 +46,7 @@ export default class extends Component {
               <meta name="description" content={description} />
             </Helmet>
 
-            {images.length ? <img src={images[0]} alt={title} /> : ''}
+            {images.length ? <Image src={images[0]} alt={title} /> : null}
 
             <h1>{title}</h1>
             <p>{description}</p>
@@ -54,7 +55,6 @@ export default class extends Component {
               {context => {
                 return context.isAuthenticated ? (
                   <>
-                    <h2>Tee tarjous</h2>
                     <Modal setOpener={open => this.openOfferForm = open}>
                       <OfferForm listingId={this.props.match.params.id}/>
                     </Modal>

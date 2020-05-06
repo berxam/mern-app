@@ -4,8 +4,19 @@ const UserModel = require('../models/UserModel')
 const { notifEmitter } = require('../models/Notifications')
 const { authenticate, cookieAuth } = require('../middleware/auth')
 
-router.get('/:id', (req, res) => {
-  // { username, rating }
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id, 'username rating')
+    res.json(user)
+  } catch (err) {
+    switch (err.name) {
+      case 'CastError':
+        res.sendStatus(404)
+        break
+      default:
+        res.status(500).json(err)
+    }
+  }
 })
 
 router.put('/:id', authenticate, (req, res) => {

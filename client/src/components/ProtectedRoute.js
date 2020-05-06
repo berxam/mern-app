@@ -9,27 +9,18 @@ export default ({ component: Component, render, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props => {
-        console.log('[ProtectedRoute]', 'Authentication context:', authContext)
-        console.log('[ProtectedRoute]',
-          authContext.isAuthenticated
-            ? 'Authenticated, rendering component...'
-            : 'Not authenticated! Redirecting...'
+      render={props => (
+        authContext.isAuthenticated ? (
+          render ? render(props) : <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/",
+              state: { from: props.location }
+            }}
+          />
         )
-
-        return (
-          authContext.isAuthenticated ? (
-            render ? render(props) : <Component {...props} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/",
-                state: { from: props.location }
-              }}
-            />
-          )
-        )
-      }}
+      )}
     />
   )
 }

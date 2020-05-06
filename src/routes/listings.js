@@ -1,22 +1,9 @@
-const { resolve } = require('path')
-const { cwebp } = require('webp-converter')
 const router = require('express').Router()
 
-const UPLOADS_DIR = resolve(__dirname, '../../uploads')
-// Set up multer middleware for uploading files
-const multer = require('multer')
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, resolve(UPLOADS_DIR, './tmp'))
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname)
-  }
-})
-const upload = multer({ storage })
+const { upload, saveImages } = require('../middleware/upload')
+const { authenticate } = require('../middleware/auth')
 
 const ListingModel = require('../models/ListingModel')
-const { authenticate } = require('../middleware/auth')
 const paginateModel = require('../helpers/paginateModel')
 
 router.get('/', paginateModel(ListingModel, null, 'creatorId', 'createdAt'))
@@ -38,27 +25,8 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', upload.array('pics', 10), async (req, res) => {
   if (req.files) {
-    const images = []
-    req.files.forEach(file => {
-      const { filename, path } = file
-      const extPos = filename.lastIndexOf('.')
-      const newName = `${new Date().toISOString().replace(/:/g, '.')}_${
-        filename.substr(0, extPos < 0 ? filename.length : extPos)}.webp`
-      const dest = resolve(UPLOADS_DIR, newName)
-
-      images.push(new Promise((resolve, reject) => {
-        cwebp(path, dest, '-q 70', (status, error) => {
-          if (error) return reject(error)
-
-          resolve(`${req.protocol}://${
-            req.get('host') + '/uploads/' + newName
-          }`)
-        })
-      }))
-    })
-
     try {
-      req.body.images = await Promise.all(images)
+      req.body.images = await saveImages(req.files, req.realBaseUrl)
     } catch (error) {
       return res.sendStatus(500)
     }
@@ -110,11 +78,11 @@ router.post('/:id/offer', authenticate, async (req, res) => {
 
     listing.offers.push({
       creatorId: req.user.id,
-      creatorListingId: req.body.listing
+      creatorListingId: req.body.creatorListingId
     })
 
     await listing.save()
-    res.sendStatus(200)
+    res.sendStatus(201)
   } catch (error) {
     console.log(error)
     res.sendStatus(500)

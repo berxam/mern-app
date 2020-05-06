@@ -101,7 +101,7 @@ router.get('/refresh', async (req, res) => {
   }
 })
 
-router.get('/logout', authenticate, async (req, res) => {
+router.delete('/logout', authenticate, async (req, res) => {
   const refreshToken = req.cookies.jid
 
   if (!refreshToken) {

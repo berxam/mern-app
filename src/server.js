@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const attachHostUrls = require('./middleware/attachHostUrls')
 require('dotenv').config()
 
 // Connect to database
@@ -20,12 +21,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
 app.use('/uploads', express.static(resolve(__dirname, '../uploads')))
 app.use(express.json())
 app.use(cookieParser())
-app.use((req, res, next) => {
-  req.fullUrl = `${req.protocol}://${
-    req.get('host') + req.baseUrl + req.path
-  }`
-  next()
-})
+app.use(attachHostUrls)
 
 // Bind routes
 app.use('/listings', require('./routes/listings'))

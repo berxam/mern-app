@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
+import fetchWithAuth from '../helpers/fetchWithAuth'
+import createUrl from '../helpers/createUrl'
+import getUser from '../helpers/getUser'
+
 import IconButton from './IconButton'
 import '../styles/Notifications.scss'
 
@@ -35,15 +39,12 @@ export default class NotificationButton extends Component {
   }
 
   async componentDidMount () {
-    const user = JSON.parse(localStorage.getItem('jid'))
+    const { id } = getUser()
+    const dbUrl = createUrl(`/users/${id}/notifs`)
+    const streamUrl = createUrl(`/users/${id}/notifs/stream`)
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${user.id}/notifs`, {
-        credentials: 'include',
-        headers: {
-          authorization: `Bearer ${user.accessToken}`
-        }
-      })
+      const response = await fetchWithAuth(dbUrl)
 
       if (response.ok) {
         const notifications = await response.json()
@@ -55,10 +56,7 @@ export default class NotificationButton extends Component {
       console.error(error)
     }
 
-    this.notifStream = new EventSource(
-      `http://localhost:5000/users/${user.id}/notifs/stream`,
-      { withCredentials: true }
-    )
+    this.notifStream = new EventSource(streamUrl, { withCredentials: true })
     this.notifStream.addEventListener('message', this.onNewNotif)
   }
 
@@ -80,32 +78,26 @@ export default class NotificationButton extends Component {
   }
   
   onNewNotif = (messageEvent) => {
-    console.log('Got new notification!')
     const notif = JSON.parse(messageEvent.data)
+
     this.setState(state => ({
-      notifications: [...state.notifications, notif]
+      notifications: [notif, ...state.notifications]
     }))
   }
 
   markNotifsAsSeen = async () => {
-    const notifications = this.state.notifications.map(notif => {
-      if (notif.isUnseen) notif.isUnseen = false
-      return notif
-    })
-    this.setState({ notifications })
-    const user = JSON.parse(localStorage.getItem('jid'))
-    const url = `http://localhost:5000/users/${user.id}/notifs/mark-read`
-    const init = {
-      method: 'PUT',
-      headers: {
-        authorization: `Bearer ${user.accessToken}`
-      },
-      credentials: 'include'
-    }
+    this.setState(({ notifications }) => ({
+      notifications: notifications.map(notif => {
+        if (notif.isUnseen) notif.isUnseen = false
+        return notif
+      })
+    }))
+
+    const url = createUrl(`/users/${getUser().id}/notifs/mark-read`)
 
     try {
-      const response = await fetch(url, init)
-      
+      const response = await fetchWithAuth(url, { method: 'PUT' })
+
       if (response.ok) {
         console.log('Notifs marked as seen!')
       } else {
@@ -134,6 +126,7 @@ export default class NotificationButton extends Component {
           id="notifications"
           {...(() => unreadNotifs && { 'data-notifs': unreadNotifs })()}
         />
+
         <NotificationPanel
           open={this.state.panelIsOpen}
           notifications={this.state.notifications}

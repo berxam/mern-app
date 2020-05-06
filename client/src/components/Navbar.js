@@ -46,7 +46,7 @@ export default class extends Component {
                       />
                       <IconButton
                         onClick={() => context.logout()}
-                        label={JSON.parse(localStorage.getItem('jid')).username}
+                        label="Log out"
                         title="Should drop down links to profile, settings, log out"
                         icon="user-2"
                       />
