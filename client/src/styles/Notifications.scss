@@ -1,17 +1,19 @@
 @import '_variables';
 
 .notifs {
-  @media screen and (min-width: map-get($breakpoints, "s")) {
-    position: relative;
-  }
+  position: relative;
+  //@media screen and (min-width: map-get($breakpoints, "s")) {
+  //}
 
   .expandable {
     display: none;
     flex-direction: column;
-    top: 140%;
-    width: 100%;
-    height: 90vh;
+    position: fixed;
+    top: 7rem;
+    left: 1rem;
+    width: 90%;
     overflow-y: scroll;
+    overflow-x: hidden;
     background-color: $white;
     border-radius: 4px;
     box-shadow:
@@ -21,6 +23,7 @@
     @media screen and (min-width: map-get($breakpoints, "s")) {
       position: absolute;
       left: -100%;
+      top: 140%;
       transform: translateX(-50%);
       width: 300px;
       height: 400px;
@@ -39,6 +42,38 @@
       width: 100%;
       padding: .7rem;
     }
+  }
+}
+
+.notif {
+  position: relative;
+  transition: background-color .15s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .small {
+    top: 7px;
+    right: 2px;
+    width: 15px;
+    height: 7px;
+
+    &::before, &::after {
+      height: 4px;
+      width: 15px;
+    }
+  }
+
+  a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  span:nth-child(2) {
+    font-size: .7em;
+    color: gray;
   }
 }
 

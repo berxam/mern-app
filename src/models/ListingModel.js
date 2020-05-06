@@ -21,11 +21,31 @@ OfferSchema.pre('save', async function (next) {
       const offerSender = await UserModel.findById(this.creatorId)
 
       offerReceiver.notifications.push({
-        title: `${offerSender.username} made an offer for ${listing.title}`,
+        title: `${offerSender.username} teki tarjouksen tuotteesta ${listing.title}`,
         listingId: listing._id
       })
 
       await offerReceiver.save()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  if (this.isModified('accepted') && this.accepted !== null) {
+    try {
+      const listing = this.parent()
+      const actingUser = await UserModel.findById(listing.creatorId)
+      const notifReceiver = await UserModel.findById(this.creatorId)
+      const notification = { listingId: listing._id }
+
+      if (this.accepted) {
+        notification.title = `${actingUser.username} hylkäsi tarjouksesi ${listing.title}`
+      } else {
+        notification.title = `${actingUser.username} hyväksyi tarjouksesi ${listing.title}`
+      }
+
+      notifReceiver.notifications.push(notification)
+      await notifReceiver.save()
     } catch (error) {
       console.log(error)
     }

@@ -8,6 +8,9 @@ import IconButton from '../components/IconButton'
 import Modal from '../components/Modal'
 import Image from '../components/Image'
 import { AuthContext } from '../components/AuthContext'
+import createUrl from '../helpers/createUrl'
+
+import '../styles/ListingPage.scss'
 
 export default class extends Component {
   constructor (props) {
@@ -18,17 +21,33 @@ export default class extends Component {
   }
 
   componentDidMount () {
-    this.loadListing()
+    this.loadListing(this.props.match.params.id)
   }
 
-  loadListing = async () => {
+  componentWillReceiveProps (nextProps) {
+    if(this.props.match.params.id !== nextProps.match.params.id) {
+      this.loadListing(nextProps.match.params.id)
+    }
+  }
+
+  loadListing = async (id) => {
+    const url = createUrl(`/listings/${id}`)
+
     try {
-      const response = await fetch(`http://localhost:5000/listings/${
-        this.props.match.params.id
-      }`)
-      const listing = await response.json()
-      console.log(listing)
-      this.setState({ listing })
+      const response = await fetch(url)
+
+      if (response.ok) {
+        const listing = await response.json()
+        this.setState({ listing })
+      } else {
+        this.setState({ listing: {
+          title: 'Not found',
+          description: 'Wrong ID in the URL...',
+          images: [],
+          offers: [],
+          notFound: true
+        }})
+      }
     } catch (error) {
       console.error('[ListingPage:loadListing]', error)
     }
@@ -51,25 +70,30 @@ export default class extends Component {
             <h1>{title}</h1>
             <p>{description}</p>
 
-            <AuthContext.Consumer>
-              {context => {
-                return context.isAuthenticated ? (
-                  <>
-                    <Modal setOpener={open => this.openOfferForm = open}>
-                      <OfferForm listingId={this.props.match.params.id}/>
-                    </Modal>
-                    <IconButton
-                      onClick={() => this.openOfferForm()}
-                      label="Tee tarjous"
-                      icon="paper-plane-1"
-                    />
-                  </>
-                ) : null
-              }}
-            </AuthContext.Consumer>
-
-            <h2>Tarjoukset</h2>
-            {offers.length ? <Offers offers={offers} /> : 'Ei tarjouksia'}
+            {!this.state.listing.notFound && (
+              <section>
+                <header className="offer-container-header">
+                  <h2>Tarjoukset</h2>
+                  <AuthContext.Consumer>
+                    {context => {
+                      return context.isAuthenticated ? (
+                        <>
+                          <Modal setOpener={open => this.openOfferForm = open}>
+                            <OfferForm listingId={this.props.match.params.id}/>
+                          </Modal>
+                          <IconButton
+                            onClick={() => this.openOfferForm()}
+                            label="Tee tarjous"
+                            icon="paper-plane-1"
+                          />
+                        </>
+                      ) : null
+                    }}
+                  </AuthContext.Consumer>
+                </header>
+                {offers.length ? <Offers offers={offers} /> : 'Ei tarjouksia'}
+              </section>
+            )}
           </>
         ) : <Loader />}
       </main>

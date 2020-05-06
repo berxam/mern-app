@@ -39,7 +39,7 @@ router.get('/:id/notifs', authenticate, async (req, res) => {
     ))
     res.json(sortedNotifs)
   } catch (err) {
-    res.sendStatus(500)
+    res.status(500).json(err)
   }
 })
 
@@ -82,9 +82,22 @@ router.put('/:id/notifs/mark-read', authenticate, async (req, res) => {
     })
     user.notifications = allRead
     await user.save()
-    res.sendStatus(200)
+    res.sendStatus(204)
   } catch (err) {
-    res.sendStatus(500)
+    res.status(500).json(err)
+  }
+})
+
+router.delete('/:userId/notifs/:notifId', authenticate, async (req, res) => {
+  if (req.user.id !== req.params.userId) return res.sendStatus(403)
+
+  try {
+    const user = await UserModel.findById(req.user.id)
+    user.notifications.remove({ _id: req.params.notifId })
+    await user.save()
+    res.sendStatus(204)
+  } catch (err) {
+    res.status(500).json(err)
   }
 })
 

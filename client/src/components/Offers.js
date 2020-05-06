@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 import createUrl from '../helpers/createUrl'
+import '../styles/Offers.scss'
 
 class Offer extends Component {
   constructor (props) {
@@ -36,12 +37,25 @@ class Offer extends Component {
     const { username, listingName } = this.state
 
     return (
-      <li>
-        <Link to={`/users/${creatorId}`}>
-          {username || 'Loading'}
-        </Link> tarjosi <Link to={`/listings/${creatorListingId}`}>
-          {listingName || 'loadingin...'}
-        </Link>
+      <li className="offer">
+        <span>
+          <Link to={`/users/${creatorId}`}>
+            {username || 'Loading'}
+          </Link> tarjosi <Link to={`/listings/${creatorListingId}`}>
+            {listingName || 'loadingin...'}
+          </Link>
+        </span>
+
+        <div>
+          <button
+            onClick={() => this.setAccept(true)}
+            className="btn-primary"
+          >Hyväksy</button>
+          <button
+            onClick={() => this.setAccept(false)}
+            className="btn"
+          >Hylkää</button>
+        </div>
       </li>
     )
   }

@@ -1,0 +1,19 @@
+.offer {
+  margin-top: .4rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 1rem;
+  border-radius: 8px;
+  list-style: none;
+  transition:
+    background-color .2s ease-in-out;
+
+  &:hover {
+    background-color: rgba(0,0,0,.02);
+  }
+
+  div {
+    margin-left: auto;
+  }
+}

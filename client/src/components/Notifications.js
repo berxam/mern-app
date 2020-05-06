@@ -9,6 +9,48 @@ import getUser from '../helpers/getUser'
 import IconButton from './IconButton'
 import '../styles/Notifications.scss'
 
+const formatTime = (time) => {
+  const date = new Date(time)
+  return date.toLocaleString()
+}
+
+const Notification = (props) => {
+  const { _id, listingId, title, createdAt } = props
+  const userId = getUser().id
+
+  const remove = async () => {
+    const url = createUrl(`/users/${userId}/notifs/${_id}`)
+    
+    try {
+      const res = await fetchWithAuth(url, {
+        method: 'DELETE'
+      })
+
+      if (res.ok) {
+        props.removeNotif()
+      } else {
+        console.error(res)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  
+  return (
+    <>
+      <Link to={`/listings/${listingId}`}>
+        <span>{title}</span>
+        <span>{formatTime(createdAt)}</span>
+      </Link>
+      <button
+        onClick={remove}
+        title="Remove"
+        className="btn-close small"
+      ></button>
+    </>
+  )
+}
+
 const NotificationPanel = (props) => {
   return (
     <div
@@ -17,11 +59,8 @@ const NotificationPanel = (props) => {
     >
       <ul>
         {props.notifications.map((notif, idx) => (
-          <li key={idx}>
-            <Link to={`/listings/${notif.listingId}`}>
-              {notif.title}
-              {/*<span>{notif.createdAt}</span>*/}
-            </Link>
+          <li key={idx} className="notif">
+            <Notification {...notif} />
           </li>
         ))}
       </ul>
@@ -48,7 +87,18 @@ export default class NotificationButton extends Component {
 
       if (response.ok) {
         const notifications = await response.json()
-        this.setState({ notifications })
+        this.setState({
+          notifications: notifications.map((notif) => {
+            notif.removeNotif = () => {
+              this.setState(state => ({
+                notifications: state.notifications
+                  .filter(n => n._id !== notif._id)
+              }))
+            }
+
+            return notif
+          })
+        })
       } else {
         console.error(response)
       }
@@ -114,7 +164,9 @@ export default class NotificationButton extends Component {
     return (
       <div className="notifs">
         <Helmet
-          titleTemplate={unreadNotifs ? `(${unreadNotifs}) %s` : '%s'}
+          titleTemplate={unreadNotifs ?
+            `(${unreadNotifs}) %s - Vaihtokauppa`
+            : '%s - Vaihtokauppa'}
         />
 
         <IconButton

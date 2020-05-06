@@ -89,6 +89,21 @@ router.post('/:id/offer', authenticate, async (req, res) => {
   }
 })
 
+// Accepting/rejecting offers
+router.put('/:id/offer/:offerId', authenticate, async (req, res) => {
+  try {
+    const listing = await ListingModel.findById(req.params.id)
+    const offer = listing.offers.pull({ _id: req.params.offerId })
+    offer.accepted = req.body.accepted
+    listing.offers.push(offer)
+    await listing.save()
+    res.sendStatus(204)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 router.delete('/:id', async (req, res) => {
   const _id = req.params.id
 

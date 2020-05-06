@@ -8,6 +8,10 @@
   font-family: 'Spartan', sans-serif;
 }
 
+#root > *:last-child {
+  margin-bottom: 8rem;
+} 
+
 body {
   background-color: $white;
 }
@@ -84,3 +88,49 @@ h2 {
 p {
   margin-bottom: .5em;
 }
+
+
+.btn-close {
+  $size: 30px;
+  $topRight: 20px;
+  $red: rgb(221, 47, 59);
+
+  all: unset;
+
+  position: absolute;
+  top: $topRight;
+  right: $topRight;
+  width: $size;
+  height: $size;
+  cursor: pointer;
+
+  &::before, &::after {
+    height: 4px;
+    width: $size;
+    position: absolute;
+    border-radius: 2px;
+    background-color: rgb(192, 192, 192);
+    content: '';
+    transition: all .3s ease-in;
+  }
+
+  &::before {
+    transform: rotate(45deg);
+  }
+  
+  &::after {
+    transform: rotate(-45deg);
+  }
+
+  &:hover, &:focus {
+    &::before {
+      transform: rotate(-45deg);
+      background-color: $red;
+    }
+    &::after {
+      transform: rotate(45deg);
+      background-color: $red;
+    }
+  }
+}
+
