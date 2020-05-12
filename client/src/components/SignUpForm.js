@@ -24,15 +24,10 @@ export default class extends Component {
   onError = async (err) => {
     if (err instanceof Response) {
       const body = await err.json()
-      let errors = []
-
-      for (const key in body.errors) {
-        errors.push(body.errors[key].message)
-      }
 
       this.setState({
         submitting: false,
-        responseMsg: errors.join(' ')
+        responseMsg: body.errors.join(' ')
       })
     } else {
       this.setState({
