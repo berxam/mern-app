@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import fetchWithAuth from '../helpers/fetchWithAuth'
 import createUrl from '../helpers/createUrl'
+import {Link} from 'react-router-dom'
 
 export default class extends Component {
   constructor (props) {
@@ -40,11 +41,18 @@ export default class extends Component {
 
   render () {
     return (
-        <div className="profilePreview">
-          <h3>{this.state.userName}</h3>
-          <p>posi = {this.state.userRating[0]} nega = {this.state.userRating[1]}</p>
-          <p>location: {this.state.location}</p>
-        </div>
+      <div className="row">
+        <section className="d12 m8">
+        <h3>
+        <Link to={`/users/${this.props.userID}`}>
+            {this.state.userName}
+        </Link>
+        </h3> <br/>
+          <p>Palaute:</p>
+          <p>{this.state.userRating[0]} Positiivista {this.state.userRating[1]} Negatiivista </p>
+          <p>Sijainti: {this.state.location}</p>
+        </section>
+      </div>
     )
   }
 }

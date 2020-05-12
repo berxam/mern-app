@@ -74,7 +74,7 @@ export default class extends Component {
                 <p>{description}</p>
               </section>
               <section className="d12 m4">
-                <h2>Käyttäjän tiedot</h2>
+                <h2>Myyjän tiedot</h2>
                 <ProfilePreview userID={this.state.listing.creatorId}/>
               </section>
             </div>
