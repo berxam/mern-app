@@ -7,7 +7,6 @@ const { authenticate } = require('../middleware/auth')
 
 const ROLES = require('../helpers/roles')
 
-// add remember me functionality!!!!
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
   const user = await UserModel.findOne({ email })

@@ -2,9 +2,11 @@ const router = require('express').Router()
 
 const { upload, saveImages } = require('../middleware/upload')
 const { authenticate } = require('../middleware/auth')
+const ensureListingOwner = require('../middleware/ensureListingOwnership')
 
 const ListingModel = require('../models/ListingModel')
 const paginateModel = require('../helpers/paginateModel')
+const { getObjectFields } = require('../helpers/objects')
 const ROLES = require('../helpers/roles')
 
 router.get('/', paginateModel(ListingModel, null, 'creatorId', 'createdAt'))
@@ -24,7 +26,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', authenticate(ROLES.BASIC), upload.array('pics', 10), async (req, res) => {
+router.post('/', [authenticate(ROLES.BASIC), upload.array('pics', 10)], async (req, res) => {
   if (req.files) {
     try {
       req.body.images = await saveImages(req.files, req.realBaseUrl)
@@ -46,13 +48,16 @@ router.post('/', authenticate(ROLES.BASIC), upload.array('pics', 10), async (req
 })
 
 // For updating listing values other than `offers`
-// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
-router.put('/:id', authenticate(ROLES.BASIC), async (req, res) => {
-  const _id = req.params.id
+router.put('/:id', [authenticate(ROLES.BASIC), ensureListingOwner()], async (req, res) => {
+  const updateBody = getObjectFields(req.body, 'title description keywords images')
+
+  for (const key in updateBody) {
+    req.listing[key] = updateBody[key]
+  }
 
   try {
-    const listing = await ListingModel.findOneAndUpdate({ _id }, req.body, { new: true })
-    res.json(listing)
+    await req.listing.save()
+    res.json(req.listing)
   } catch (error) {
     switch (error.name) {
       case 'CastError':
@@ -86,13 +91,11 @@ router.post('/:id/offer', authenticate(ROLES.BASIC), async (req, res) => {
 })
 
 // Accepting/rejecting offers
-// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
-router.put('/:id/offers/:offerId', authenticate(ROLES.BASIC), async (req, res) => {
+router.put('/:id/offers/:offerId', [authenticate(ROLES.BASIC), ensureListingOwner()], async (req, res) => {
   try {
-    const listing = await ListingModel.findById(req.params.id)
-    const offer = listing.offers.id(req.params.offerId)
+    const offer = req.listing.offers.id(req.params.offerId)
     offer.accepted = req.body.accepted
-    await listing.save()
+    await req.listing.save()
     res.sendStatus(204)
   } catch (error) {
     console.log(error)
@@ -100,12 +103,9 @@ router.put('/:id/offers/:offerId', authenticate(ROLES.BASIC), async (req, res) =
   }
 })
 
-// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
-router.delete('/:id', authenticate(ROLES.BASIC), async (req, res) => {
-  const _id = req.params.id
-
+router.delete('/:id', [authenticate(ROLES.BASIC), ensureListingOwner()], async (req, res) => {
   try {
-    const result = await ListingModel.remove({ _id })
+    const result = await ListingModel.remove({ _id: req.listing._id })
     if (!result) res.sendStatus(404)
     res.json(result)
   } catch (error) {
