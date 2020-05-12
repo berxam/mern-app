@@ -1,20 +1,16 @@
 const jwt = require('jsonwebtoken')
 
-exports.authenticateOld = (req, res, next) => {
-  const authHeader = req.headers.authorization
-  const token = authHeader && authHeader.split(' ')[1]
-
-  if (!token) return res.sendStatus(401)
-
-  try {
-    const user = jwt.verify(token, process.env.ACCESS_SECRET)
-    req.user = user
-    next()
-  } catch (err) {
-    res.sendStatus(403)
+exports.ensureUserId = (field = 'id') => {
+  return (req, res, next) => {
+    if (req.user.id && req.params[field] && req.user.id === req.params[field]) {
+      next()
+    } else {
+      return res.sendStatus(403)
+    }
   }
 }
 
+// Used for SSE
 exports.cookieAuth = (req, res, next) => {
   const token = req.cookies.jid
 

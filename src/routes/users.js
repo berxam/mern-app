@@ -3,7 +3,7 @@ const router = require('express').Router()
 const ROLES = require('../helpers/roles')
 const UserModel = require('../models/UserModel')
 const { notifEmitter } = require('../models/Notifications')
-const { authenticate, cookieAuth } = require('../middleware/auth')
+const { authenticate, cookieAuth, ensureUserId } = require('../middleware/auth')
 const { getObjectFields } = require('../helpers/objects')
 
 router.get('/:id', async (req, res) => {
@@ -34,10 +34,8 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/:id', authenticate(ROLES.BASIC), async (req, res) => {
-  if (req.user.id !== req.params.id) return res.sendStatus(403)
+router.put('/:id', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
   const _id = req.params.id
-
   const updateBody = getObjectFields(req.body,
     'username email password location description'
   )
@@ -59,14 +57,11 @@ router.put('/:id', authenticate(ROLES.BASIC), async (req, res) => {
   }
 })
 
-router.delete('/:id', authenticate(ROLES.BASIC), (req, res) => {
-  if (req.user.id !== req.params.id) return res.sendStatus(403)
+router.delete('/:id', [authenticate(ROLES.BASIC), ensureUserId()], (req, res) => {
   // TO DO: delete user & all listings with userId
 })
 
-router.get('/:id/notifs', authenticate(ROLES.BASIC), async (req, res) => {
-  if (req.user.id !== req.params.id) return res.sendStatus(403)
-
+router.get('/:id/notifs', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id)
     const sortedNotifs = [...user.notifications].sort((a, b) => (
@@ -78,9 +73,7 @@ router.get('/:id/notifs', authenticate(ROLES.BASIC), async (req, res) => {
   }
 })
 
-router.get('/:id/notifs/stream', cookieAuth, (req, res) => {
-  if (req.user.id !== req.params.id) return res.sendStatus(403)
-
+router.get('/:id/notifs/stream', [cookieAuth, ensureUserId()], (req, res) => {
   res.set({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -103,9 +96,7 @@ router.get('/:id/notifs/stream', cookieAuth, (req, res) => {
   })
 })
 
-router.put('/:id/notifs/mark-read', authenticate(ROLES.BASIC), async (req, res) => {
-  if (req.user.id !== req.params.id) return res.sendStatus(403)
-
+router.put('/:id/notifs/mark-read', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id)
     const allRead = user.notifications.map(notif => {
@@ -123,9 +114,7 @@ router.put('/:id/notifs/mark-read', authenticate(ROLES.BASIC), async (req, res) 
   }
 })
 
-router.delete('/:userId/notifs/:notifId', authenticate(ROLES.BASIC), async (req, res) => {
-  if (req.user.id !== req.params.userId) return res.sendStatus(403)
-
+router.delete('/:userId/notifs/:notifId', [authenticate(ROLES.BASIC), ensureUserId('userId')], async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id)
     user.notifications.remove({ _id: req.params.notifId })
