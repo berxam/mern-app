@@ -11,6 +11,7 @@ import { AuthContext } from './AuthContext'
 
 import '../styles/Navbar.scss'
 import '../styles/forms.scss'
+import getUser from '../helpers/getUser'
 
 export default class extends Component {
   constructor (props) {
@@ -53,10 +54,16 @@ export default class extends Component {
                           icon="edit-1"
                         />
                         <IconButton
+                          to={'/users/' + getUser().id}
+                          label="Profile"
+                          title="View and edit profile"
+                          icon="user-2"
+                        />
+                        <IconButton
                           onClick={() => context.logout()}
                           label="Log out"
                           title="Should drop down links to profile, settings, log out"
-                          icon="user-2"
+                          icon="padlock-1"
                         />
                       </>
                     ) : (

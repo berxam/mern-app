@@ -8,7 +8,8 @@ export default class extends Component {
     super(props)
       this.state = {
           userName: '',
-          userRating: []
+          userRating: [],
+          location: ''
       }
   }
 
@@ -26,7 +27,8 @@ export default class extends Component {
           console.log(user)
           this.setState({
               userName: user.username,
-              userRating: [user.rating.positive, user.rating.negative]
+              userRating: [user.rating.positive, user.rating.negative],
+              location: user.location
           })
       } else {
         console.error(response)
@@ -41,6 +43,7 @@ export default class extends Component {
         <div className="profilePreview">
           <h3>{this.state.userName}</h3>
           <p>posi = {this.state.userRating[0]} nega = {this.state.userRating[1]}</p>
+          <p>location: {this.state.location}</p>
         </div>
     )
   }

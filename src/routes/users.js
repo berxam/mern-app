@@ -6,7 +6,7 @@ const { authenticate, cookieAuth } = require('../middleware/auth')
 
 router.get('/:id', async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id, 'username rating')
+    const user = await UserModel.findById(req.params.id, 'username rating location description')
     res.json(user)
   } catch (err) {
     switch (err.name) {
@@ -20,9 +20,8 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const { email, username, password } = req.body
 
-  const newUser = new UserModel({ email, username, password })
+  const newUser = new UserModel(req.body)
 
   try {
     await newUser.save()
