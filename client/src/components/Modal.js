@@ -12,8 +12,9 @@ export default class extends Component {
   
   componentDidMount () {
     document.addEventListener('mousedown', this.outClick)
-    // Give parents access to opening
+    // Give parents access to opening & closing
     this.props.setOpener(this.open)
+    this.props.setCloser(this.hide)
   }
 
   componentWillUnmount () {

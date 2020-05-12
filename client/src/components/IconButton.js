@@ -8,8 +8,9 @@ export default ({ to, icon, label, title, className, ...rest }) => {
     return (
       <Link
         to={to}
-        className={"nav-btn " + className || ''}
+        className={"nav-btn " + (className || '')}
         title={title || label}
+        {...rest}
       >
         <i className={"icon-" + icon}></i>
         <span>{label}</span>
@@ -19,7 +20,7 @@ export default ({ to, icon, label, title, className, ...rest }) => {
   else {
     return (
       <button
-        className={"nav-btn " + className || ''}
+        className={"nav-btn " + (className || '')}
         title={title || label}
         {...rest}
       >

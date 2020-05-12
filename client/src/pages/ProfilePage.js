@@ -45,8 +45,10 @@ export default class extends Component {
 
             <h1>{username}</h1>
             <p>loca : {location}</p>
-            <Modal setOpener={open => this.openEditModal = open}>
-              <EditForm id={this.props.match.params.id}/>
+            <Modal
+              setOpener={open => this.openEditModal = open}
+              setCloser={hide => this.hideEditModal = hide}>
+              <EditForm id={this.props.match.params.id} hideModal={this.hideEditModal} />
             </Modal>
             <button className="btn-primary" 
               onClick={() => this.openEditModal()}>

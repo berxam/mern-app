@@ -76,6 +76,17 @@ UserSchema.pre('save', async function (next) {
   next()
 })
 
+const ListingModel = require('./ListingModel')
+
+UserSchema.post('remove', async function (user, next) {
+  // Delete all listings created by this user
+  await ListingModel.remove({ creatorId: user._id })
+
+  // Should also delete all offers but that's hard :D
+
+  next()
+})
+
 UserSchema.methods.comparePassword = async function (password) {
   return compare(password, this.password)
 }

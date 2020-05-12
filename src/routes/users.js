@@ -22,7 +22,6 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-
   const newUser = new UserModel(req.body)
 
   try {
@@ -57,8 +56,14 @@ router.put('/:id', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res)
   }
 })
 
-router.delete('/:id', [authenticate(ROLES.BASIC), ensureUserId()], (req, res) => {
-  // TO DO: delete user & all listings with userId
+router.delete('/:id', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
+  try {
+    const result = await UserModel.remove({ _id: req.params.id })
+    if (!result) res.sendStatus(404)
+    res.json(result)
+  } catch (error) {
+    res.status(500).json(error)
+  }
 })
 
 router.get('/:id/notifs', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
