@@ -22,9 +22,8 @@ router.get('/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const { email, username, password } = req.body
 
-  const newUser = new UserModel({ email, username, password })
+  const newUser = new UserModel(req.body)
 
   try {
     await newUser.save()

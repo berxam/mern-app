@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
 import Loader from '../components/Loader'
+import ListingHolder from '../components/ListingHolder'
+import ListingPreview from '../components/ListingPreview'
+import EditForm from '../components/EditForm'
+import Modal from '../components/Modal'
 
 export default class extends Component {
   constructor (props) {
@@ -29,7 +33,7 @@ export default class extends Component {
   }
 
   render () {
-    const { username, rating } = this.state.user
+    const { username, rating, location, description } = this.state.user
 
     return (
       <main>
@@ -40,8 +44,26 @@ export default class extends Component {
             </Helmet>
 
             <h1>{username}</h1>
-
-            <h2>Listaukset</h2>
+            <p>loca : {location}</p>
+            <Modal setOpener={open => this.openEditModal = open}>
+              <EditForm id={this.props.match.params.id}/>
+            </Modal>
+            <button className="btn-primary" 
+              onClick={() => this.openEditModal()}>
+              Muokkaa tietoja
+            </button>
+            <div className="row">
+              <h2>Listaukset</h2>
+            </div>
+            <div className="row">
+              <section className="d12 m8">
+                <ListingHolder options={{creatorId: this.props.match.params.id}}>
+                  {({ _id, ...rest }) => (
+                    <ListingPreview key={_id} id={_id} {...rest} />
+                  )}
+                </ListingHolder>
+              </section>
+            </div>
           </>
         ) : <Loader />}
       </main>
