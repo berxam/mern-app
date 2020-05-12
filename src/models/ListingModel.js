@@ -29,9 +29,7 @@ OfferSchema.pre('save', async function (next) {
     } catch (error) {
       console.log(error)
     }
-  }
-
-  if (this.isModified('accepted') && this.accepted !== null) {
+  } else if (this.isModified('accepted')) {
     try {
       const listing = this.parent()
       const actingUser = await UserModel.findById(listing.creatorId)
@@ -39,9 +37,9 @@ OfferSchema.pre('save', async function (next) {
       const notification = { listingId: listing._id }
 
       if (this.accepted) {
-        notification.title = `${actingUser.username} hylkäsi tarjouksesi ${listing.title}`
-      } else {
         notification.title = `${actingUser.username} hyväksyi tarjouksesi ${listing.title}`
+      } else {
+        notification.title = `${actingUser.username} hylkäsi tarjouksesi ${listing.title}`
       }
 
       notifReceiver.notifications.push(notification)

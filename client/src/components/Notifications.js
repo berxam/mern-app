@@ -54,8 +54,9 @@ const Notification = (props) => {
 const NotificationPanel = (props) => {
   return (
     <div
+      ref={props.setRef}
       aria-labelledby="notifications"
-      className={'expandable' + (props.open ? ' active' : '')}
+      className={'expandable' + (props.isOpen ? ' active' : '')}
     >
       <ul>
         {props.notifications.map((notif, idx) => (
@@ -123,6 +124,22 @@ export default class NotificationButton extends Component {
     }
   }
 
+  outClick = (event) => {
+    if (this.state.panelIsOpen && this.panelRef && !this.panelRef.contains(event.target)) {
+      this.hide()
+    }
+  }
+
+  open = () => {
+    this.setState({ panelIsOpen: true })
+    document.addEventListener('click', this.outClick)
+  }
+
+  hide = () => {
+    this.setState({ panelIsOpen: false })
+    document.removeEventListener('click', this.outClick)
+  }
+
   getUnreadNotifs = () => {
     return this.state.notifications.filter(notif => notif.isUnseen)
   }
@@ -170,7 +187,7 @@ export default class NotificationButton extends Component {
         />
 
         <IconButton
-          onClick={() => this.setState(({ panelIsOpen }) => ({ panelIsOpen: !panelIsOpen }))}
+          onClick={() => this.state.panelIsOpen ? this.hide() : this.open()}
           label="Notifs"
           icon="alarm"
           aria-haspopup="true"
@@ -180,7 +197,8 @@ export default class NotificationButton extends Component {
         />
 
         <NotificationPanel
-          open={this.state.panelIsOpen}
+          isOpen={this.state.panelIsOpen}
+          setRef={ref => this.panelRef = ref}
           notifications={this.state.notifications}
         />
       </div>

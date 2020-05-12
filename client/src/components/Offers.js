@@ -35,7 +35,7 @@ class RealOffer extends Component {
     }
   }
 
-  setAccept = async (value) => {
+  setAccept = async (accepted) => {
     const url = createUrl(`/listings/${
       this.props.location.pathname.split('/')[2]
     }/offers/${this.props._id}`)
@@ -43,11 +43,14 @@ class RealOffer extends Component {
     try {
       const res = await fetchWithAuth(url, {
         method: 'PUT',
-        body: JSON.stringify({ accepted: value })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ accepted })
       })
 
       if (res.ok) {
-        console.log(`Offer ${value ? 'accepted' : 'rejected'}`)
+        console.log(`Offer ${accepted ? 'accepted' : 'rejected'}`)
       } else {
         console.error(res)
       }

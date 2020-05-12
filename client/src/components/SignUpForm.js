@@ -21,11 +21,25 @@ export default class extends Component {
     })
   }
 
-  onError = (err) => {
-    this.setState({
-      submitting: false,
-      responseMsg: 'Something went wrong'
-    })
+  onError = async (err) => {
+    if (err instanceof Response) {
+      const body = await err.json()
+      let errors = []
+
+      for (const key in body.errors) {
+        errors.push(body.errors[key].message)
+      }
+
+      this.setState({
+        submitting: false,
+        responseMsg: errors.join(' ')
+      })
+    } else {
+      this.setState({
+        submitting: false,
+        responseMsg: "Couldn't reach server!"
+      })
+    }
   }
 
   render () {
@@ -47,9 +61,6 @@ export default class extends Component {
           />
           <TextInput
             label="Password" id="signup_password" name="password" type="password" required
-          />
-          <TextInput
-            label="Confirm password" id="confirm_password" type="password" required
           />
 
           {this.state.submitting

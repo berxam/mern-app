@@ -1,24 +1,31 @@
+const { randomBytes } = require('crypto')
 const { Schema, model } = require('mongoose')
 const { hash, compare } = require('bcryptjs')
 
 const { NotificationSchema } = require('./Notifications')
 
+const ROLES = {
+  BASIC: 1,
+  ADMIN: 2
+}
+
 const UserSchema = new Schema({
   email: {
     type: String,
-    unique: true,
     required: true
   },
   username: {
     type: String,
-    unique: true,
     required: true
   },
   password: {
     type: String,
     required: true
   },
-  refreshToken: String,
+  role: {
+    type: Number,
+    default: ROLES.BASIC
+  },
   notifications: [NotificationSchema],
   rating: {
     positive: {
@@ -33,19 +40,35 @@ const UserSchema = new Schema({
   verified: {
     type: Boolean,
     default: false
-  }
+  },
+  verificationKey: String
 }, {
   timestamps: { createdAt: true }
 })
 
+// Checks if some user already has `field` with `value`
+const uniqueValidator = (field) => {
+  return async (value) => {
+    const user = await UserModel.findOne({ [field]: value })
+    return !user
+  }
+}
+
+UserSchema.path('email').validate(
+  uniqueValidator('email'), 'Email already in use!'
+)
+
+UserSchema.path('username').validate(
+  uniqueValidator('username'), 'Username already in use!'
+)
+
 UserSchema.pre('save', async function (next) {
   if (this.isModified('email') || this.isNew) {
-    try {
-      // Send email confirmation message
-
-    } catch (err) {
-      next(err)
-    }
+    // 1. Generate a verification key
+    const verificationKey = randomBytes(64).toString('hex')
+    // 2. Set the verification key as user.verificationKey
+    this.verificationKey = verificationKey
+    // 3. Send email containing link to verification
   }
 
   if (this.isModified('password') || this.isNew) {
@@ -64,4 +87,6 @@ UserSchema.methods.comparePassword = async function (password) {
   return compare(password, this.password)
 }
 
-module.exports = model('users', UserSchema)
+const UserModel = model('users', UserSchema)
+
+module.exports = UserModel
