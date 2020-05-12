@@ -9,6 +9,7 @@ import Modal from '../components/Modal'
 import Image from '../components/Image'
 import { AuthContext } from '../components/AuthContext'
 import createUrl from '../helpers/createUrl'
+import ProfilePreview from '../components/ProfilePreview'
 
 import '../styles/ListingPage.scss'
 
@@ -74,6 +75,7 @@ export default class extends Component {
               </section>
               <section className="d12 m4">
                 <h2>Käyttäjän tiedot</h2>
+                <ProfilePreview userID={this.state.listing.creatorId}/>
               </section>
             </div>
 
