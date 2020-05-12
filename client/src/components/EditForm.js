@@ -38,6 +38,7 @@ export default class extends Component {
 
       if (response.ok) {
         console.log('tiedot vaihdettu')
+        window.location.reload()
       } else {
         console.error(response)
       }

@@ -36,7 +36,7 @@ export default class extends Component {
   render () {
     const { username, rating, location, description } = this.state.user
     let button
-    if (getUser() && this.props.match.params.id == getUser().id) {
+    if (getUser() && this.props.match.params.id === getUser().id) {
       button = <button className="btn-primary" onClick={() => this.openEditModal()}> Muokkaa tietoja </button>
       }
 
@@ -50,10 +50,10 @@ export default class extends Component {
             <div className="row">
               <section className="d12 m8">
                 <h1>{username}</h1>
-                <p>Sijainti : {location}</p>
+                <p>Sijainti: {location}</p>
                 <p>{description}</p>
                 <Modal setOpener={open => this.openEditModal = open}>
-                  <EditForm id={this.props.match.params.id}/>
+                  <EditForm id={this.props.match.params.id} />
                 </Modal>
               </section>
             </div>

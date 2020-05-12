@@ -56,6 +56,24 @@ router.put('/:id', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res)
   }
 })
 
+router.post('/:id/rating', authenticate(ROLES.BASIC), async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id)
+
+    user.ratings.push({
+      creatorId: req.user.id,
+      isPositive: req.body.isPositive,
+      comment: req.body.comment
+    })
+
+    await user.save()
+    res.sendStatus(201)
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500)
+  }
+})
+
 router.delete('/:id', [authenticate(ROLES.BASIC), ensureUserId()], async (req, res) => {
   try {
     const result = await UserModel.remove({ _id: req.params.id })

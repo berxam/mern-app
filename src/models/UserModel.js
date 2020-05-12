@@ -7,6 +7,12 @@ const sendMail = require('../helpers/sendMail')
 
 const ROLES = require('../helpers/roles')
 
+const RatingShema = new Schema({
+  comment: String,
+  isPositive: Boolean,
+  creatorId: String
+})
+
 const UserSchema = new Schema({
   email: { type: String, required: true },
   username: { type: String, required: true },
@@ -16,16 +22,7 @@ const UserSchema = new Schema({
     default: ROLES.BASIC
   },
   notifications: [NotificationSchema],
-  rating: {
-    positive: {
-      type: Number,
-      default: 0
-    },
-    negative: {
-      type: Number,
-      default: 0
-    }
-  },
+  rating: [RatingShema],
   verified: {
     type: Boolean,
     default: false
