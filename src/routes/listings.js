@@ -5,6 +5,7 @@ const { authenticate } = require('../middleware/auth')
 
 const ListingModel = require('../models/ListingModel')
 const paginateModel = require('../helpers/paginateModel')
+const ROLES = require('../helpers/roles')
 
 router.get('/', paginateModel(ListingModel, null, 'creatorId', 'createdAt'))
 
@@ -23,7 +24,7 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', upload.array('pics', 10), async (req, res) => {
+router.post('/', authenticate(ROLES.BASIC), upload.array('pics', 10), async (req, res) => {
   if (req.files) {
     try {
       req.body.images = await saveImages(req.files, req.realBaseUrl)
@@ -45,18 +46,13 @@ router.post('/', upload.array('pics', 10), async (req, res) => {
 })
 
 // For updating listing values other than `offers`
-router.put('/:id', async (req, res) => {
+// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
+router.put('/:id', authenticate(ROLES.BASIC), async (req, res) => {
   const _id = req.params.id
 
   try {
-    const result = await ListingModel.updateOne({ _id }, req.body)
-
-    if (result.ok) {
-      const updatedDocument = await ListingModel.findById(_id)
-      res.json(updatedDocument)
-    } else {
-      res.json(result) // what case? status?
-    }
+    const listing = await ListingModel.findOneAndUpdate({ _id }, req.body, { new: true })
+    res.json(listing)
   } catch (error) {
     switch (error.name) {
       case 'CastError':
@@ -72,7 +68,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // For making an offer to a listing
-router.post('/:id/offer', authenticate, async (req, res) => {
+router.post('/:id/offer', authenticate(ROLES.BASIC), async (req, res) => {
   try {
     const listing = await ListingModel.findById(req.params.id)
 
@@ -90,7 +86,8 @@ router.post('/:id/offer', authenticate, async (req, res) => {
 })
 
 // Accepting/rejecting offers
-router.put('/:id/offers/:offerId', authenticate, async (req, res) => {
+// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
+router.put('/:id/offers/:offerId', authenticate(ROLES.BASIC), async (req, res) => {
   try {
     const listing = await ListingModel.findById(req.params.id)
     const offer = listing.offers.id(req.params.offerId)
@@ -103,7 +100,8 @@ router.put('/:id/offers/:offerId', authenticate, async (req, res) => {
   }
 })
 
-router.delete('/:id', async (req, res) => {
+// TO DO: CHECK THAT THE UPDATER IS THE CREATOR OF THE DOCUMENT
+router.delete('/:id', authenticate(ROLES.BASIC), async (req, res) => {
   const _id = req.params.id
 
   try {

@@ -7,7 +7,7 @@ const attachHostUrls = require('./middleware/attachHostUrls')
 require('dotenv').config()
 
 // Connect to database
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => console.log('Connected to MongoDB!'))
   .catch(err => {
     console.error(err)

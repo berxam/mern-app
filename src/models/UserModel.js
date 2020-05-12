@@ -3,11 +3,9 @@ const { Schema, model } = require('mongoose')
 const { hash, compare } = require('bcryptjs')
 
 const { NotificationSchema } = require('./Notifications')
+const sendMail = require('../helpers/sendMail')
 
-const ROLES = {
-  BASIC: 1,
-  ADMIN: 2
-}
+const ROLES = require('../helpers/roles')
 
 const UserSchema = new Schema({
   email: { type: String, required: true },
@@ -53,7 +51,18 @@ UserSchema.pre('save', async function (next) {
 
     const verificationKey = randomBytes(64).toString('hex')
     this.verificationKey = verificationKey
-    // 3. Send email containing link to verification
+
+    const mailOpts = {
+      to: this.email,
+      subject: 'Verify your email',
+      html: `Verify your email by clickin <a href="http://localhost:3000/verify?key=${verificationKey}">this link</a>.`
+    }
+
+    try {
+      await sendMail(mailOpts)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   if (this.isModified('password') || this.isNew) {

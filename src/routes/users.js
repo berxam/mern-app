@@ -1,8 +1,10 @@
 const router = require('express').Router()
 
+const ROLES = require('../helpers/roles')
 const UserModel = require('../models/UserModel')
 const { notifEmitter } = require('../models/Notifications')
 const { authenticate, cookieAuth } = require('../middleware/auth')
+const { getObjectFields } = require('../helpers/objects')
 
 router.get('/:id', async (req, res) => {
   try {
@@ -32,17 +34,37 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/:id', authenticate, (req, res) => {
+router.put('/:id', authenticate(ROLES.BASIC), async (req, res) => {
   if (req.user.id !== req.params.id) return res.sendStatus(403)
-  // TO DO: update user
+  const _id = req.params.id
+
+  const updateBody = getObjectFields(req.body,
+    'username email password location description'
+  )
+
+  try {
+    const user = await UserModel.findOneAndUpdate({ _id }, updateBody, { new: true })
+    res.json(user)
+  } catch (error) {
+    switch (error.name) {
+      case 'CastError':
+        res.sendStatus(404)
+        break
+      case 'ValidationError':
+        res.status(422).json(error)
+        break
+      default:
+        res.status(500).json(error)
+    }
+  }
 })
 
-router.delete('/:id', authenticate, (req, res) => {
+router.delete('/:id', authenticate(ROLES.BASIC), (req, res) => {
   if (req.user.id !== req.params.id) return res.sendStatus(403)
   // TO DO: delete user & all listings with userId
 })
 
-router.get('/:id/notifs', authenticate, async (req, res) => {
+router.get('/:id/notifs', authenticate(ROLES.BASIC), async (req, res) => {
   if (req.user.id !== req.params.id) return res.sendStatus(403)
 
   try {
@@ -81,7 +103,7 @@ router.get('/:id/notifs/stream', cookieAuth, (req, res) => {
   })
 })
 
-router.put('/:id/notifs/mark-read', authenticate, async (req, res) => {
+router.put('/:id/notifs/mark-read', authenticate(ROLES.BASIC), async (req, res) => {
   if (req.user.id !== req.params.id) return res.sendStatus(403)
 
   try {
@@ -101,7 +123,7 @@ router.put('/:id/notifs/mark-read', authenticate, async (req, res) => {
   }
 })
 
-router.delete('/:userId/notifs/:notifId', authenticate, async (req, res) => {
+router.delete('/:userId/notifs/:notifId', authenticate(ROLES.BASIC), async (req, res) => {
   if (req.user.id !== req.params.userId) return res.sendStatus(403)
 
   try {
