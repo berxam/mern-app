@@ -54,13 +54,13 @@ export default class extends Component {
     return (
       <Form onSubmit={this.submit}>
         <TextInput
-            label="Location" id="location_id" name="location" type="text" onChange={this.changeLocation} required
+            label="Sijainti" id="location_id" name="location" type="text" onChange={this.changeLocation} required
         />
         <TextArea
-            label="Description" id="description_id" name="description" onChange={this.changeDescription} required
+            label="Kuvaus" id="description_id" name="description" onChange={this.changeDescription} required
         />
         <button type="submit" className="btn-primary">
-          Vaihda tiedot
+          Muuta tietoja
         </button>
       </Form>
     )

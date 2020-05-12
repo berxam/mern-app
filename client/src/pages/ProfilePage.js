@@ -6,6 +6,7 @@ import ListingHolder from '../components/ListingHolder'
 import ListingPreview from '../components/ListingPreview'
 import EditForm from '../components/EditForm'
 import Modal from '../components/Modal'
+import getUser from '../helpers/getUser'
 
 export default class extends Component {
   constructor (props) {
@@ -34,6 +35,10 @@ export default class extends Component {
 
   render () {
     const { username, rating, location, description } = this.state.user
+    let button
+    if (getUser() && this.props.match.params.id == getUser().id) {
+      button = <button className="btn-primary" onClick={() => this.openEditModal()}> Muokkaa tietoja </button>
+      }
 
     return (
       <main>
@@ -42,18 +47,17 @@ export default class extends Component {
             <Helmet>
               <title>{username}</title>
             </Helmet>
-
-            <h1>{username}</h1>
-            <p>loca : {location}</p>
-            <Modal
-              setOpener={open => this.openEditModal = open}
-              setCloser={hide => this.hideEditModal = hide}>
-              <EditForm id={this.props.match.params.id} hideModal={this.hideEditModal} />
-            </Modal>
-            <button className="btn-primary" 
-              onClick={() => this.openEditModal()}>
-              Muokkaa tietoja
-            </button>
+            <div className="row">
+              <section className="d12 m8">
+                <h1>{username}</h1>
+                <p>Sijainti : {location}</p>
+                <p>{description}</p>
+                <Modal setOpener={open => this.openEditModal = open}>
+                  <EditForm id={this.props.match.params.id}/>
+                </Modal>
+              </section>
+            </div>
+            {button}
             <div className="row">
               <h2>Listaukset</h2>
             </div>
