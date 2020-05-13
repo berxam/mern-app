@@ -29,10 +29,10 @@ app.use('/', require('./client'))
 
 // Start listening on address in .env or localhost:5000
 const server = app.listen(
-  process.env.PORT || 5000,
-  process.env.HOST || 'localhost',
-  () => {
-    const { address, port } = server.address()
-    console.log(`Server running at \x1b[35m'http://${address}:${port}'\x1b[0m`)
-  }
+  process.env.PORT || 8080 // ,
+//  process.env.HOST || 'localhost',
+//  () => {
+//    const { address, port } = server.address()
+//    console.log(`Server running at \x1b[35m'http://${address}:${port}'\x1b[0m`)
+//  }
 )
