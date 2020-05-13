@@ -12,6 +12,9 @@ import createUrl from '../helpers/createUrl'
 import ProfilePreview from '../components/ProfilePreview'
 
 import '../styles/ListingPage.scss'
+import ROLES from '../helpers/roles'
+import getUser from '../helpers/getUser'
+import fetchWithAuth from '../helpers/fetchWithAuth'
 
 export default class extends Component {
   constructor (props) {
@@ -54,6 +57,23 @@ export default class extends Component {
     }
   }
 
+  removeListing = async () => {
+    const url = createUrl(`/listings/${this.props.match.params.id}`)
+
+    try {
+      const response = await fetchWithAuth(url, { method: 'DELETE' })
+
+      if (response.ok) {
+        this.props.history.push('/')
+      } else {
+        alert('Jotain meni pieleen...')
+      }
+    } catch (error) {
+      alert('Jotain meni pieleen...')
+      console.error('[ListingPage:loadListing]', error)
+    }
+  }
+
   render () {
     const { title, description, images, offers, creatorId } = this.state.listing
 
@@ -72,6 +92,18 @@ export default class extends Component {
 
                 <h1>{title}</h1>
                 <p>{description}</p>
+
+                <AuthContext.Consumer>
+                  {context => {
+                    if (!context.isAuthenticated) return null
+                    const { role, id } = getUser()
+
+                    if (id === creatorId || role === ROLES.ADMIN) {
+                      return <button className="btn" onClick={this.removeListing}>Poista listaus</button>
+                    }
+                  }}
+                </AuthContext.Consumer>
+                
               </section>
               <section className="d12 m4">
                 <h2>Myyjän tiedot</h2>

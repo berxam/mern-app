@@ -112,7 +112,7 @@ router.delete('/:id', [authenticate(ROLES.BASIC), ensureListingOwner()], async (
   try {
     const result = await ListingModel.remove({ _id: req.listing._id })
     if (!result) res.sendStatus(404)
-    res.json(result)
+    res.sendStatus(204)
   } catch (error) {
     res.status(500).json(error)
   }

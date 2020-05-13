@@ -26,6 +26,10 @@ MONGODB_URL=mongodb://127.0.0.1:27017/projekti-2
 REFRESH_SECRET=c743100401975f217e91ca66bf8fd4223c5df9c9d601ae0f66d970e
 ACCESS_SECRET=7ee456641945be2d18074c84f475b497a5ff1a4c575f2920925c044
 
+# Email credentials for email verification messages
+EMAIL_ADDRESS=example@gmail.com # HAS TO BE GMAIL!
+EMAIL_PASSWORD=Password12345678
+
 # Optionally set host and port (if none set app defaults to localhost:5000)
 PORT=5000
 HOST=127.0.0.1

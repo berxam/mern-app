@@ -47,35 +47,35 @@ export default class extends Component {
             <Helmet>
               <title>{username}</title>
             </Helmet>
+
             <div className="row">
               <section className="d12 m8">
                 <h1>{username}</h1>
-              </section>
-            </div>
-            <div className="row">
-              <section className="d12 m8">
                 {location ? <p>Sijainti: {location}</p> : null}
                 {description ? <p>{description}</p> : null}
                 {ratings ? <p>Palaute: <RatingsAverage ratings={ratings} /> </p> : null}
+
+                {getUser() && this.props.match.params.id === getUser().id ? <div><button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button></div> : null}
+              </section>
+              <section className="d12 m4">
+                <h2>Kirjoita kommentti</h2>
                 <RatingForm id={this.props.match.params.id}/>
                 <Modal setOpener={open => this.openEditModal = open}>
                   <EditForm id={this.props.match.params.id} />
                 </Modal>
+                <h2>Kommentit</h2>
+                <RatingsHolder ratings={ratings} />
               </section>
             </div>
-            {getUser() && this.props.match.params.id === getUser().id ? <button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button> : null}
-            <div className="row">
-              <h2>Listaukset</h2>
-            </div>
+            
             <div className="row">
               <section className="d12 m8">
+                <h2>Listaukset</h2>
                 <ListingHolder options={{creatorId: this.props.match.params.id}}>
                   {({ _id, ...rest }) => (
                     <ListingPreview key={_id} id={_id} {...rest} />
                   )}
                 </ListingHolder>
-                <h2>Kommentit</h2>
-                <RatingsHolder ratings={ratings} />
               </section>
             </div>
             

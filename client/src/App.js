@@ -33,7 +33,7 @@ export default () => (
           <Route path="/verify" component={VerificationPage} />
 
           <ProtectedRoute level={ROLES.BASIC} path="/create" component={CreateListingPage} />
-          <ProtectedRoute level={ROLES.ADMIN} path="/admin" render={() => 'admin'} />
+          <ProtectedRoute level={ROLES.ADMIN} path="/admin" render={() => 'Vain adminit voivat nähdä tämän tekstin'} />
 
           <Route render={() => '404 Not found'}/>
         </Switch>

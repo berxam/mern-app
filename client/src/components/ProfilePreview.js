@@ -24,7 +24,6 @@ export default class extends Component {
       const response = await fetchWithAuth(url)
       if (response.ok) {
           const user = await response.json()
-          console.log(user)
           this.setState({
               userName: user.username,
               location: user.location

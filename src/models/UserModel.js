@@ -52,7 +52,7 @@ UserSchema.pre('save', async function (next) {
     const mailOpts = {
       to: this.email,
       subject: 'Verify your email',
-      html: `Verify your email by clickin <a href="http://localhost:3000/verify?key=${verificationKey}">this link</a>.`
+      html: `Verify your email by clickin <a href="http://${process.env.HOST}/verify?key=${verificationKey}">this link</a>.`
     }
 
     try {
