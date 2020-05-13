@@ -6,19 +6,41 @@ import '../styles/ListingHolder.scss'
 export default class extends Component {
   constructor (props) {
     super(props)
+    this.lastOptions = JSON.stringify(props.options)
     this.state = {
-      listingsEndpoint: createUrl('/listings', {
-        limit: props.limit || 12,
-        page: 0,
-        ...props.options
-      }),
+      listingsEndpoint: '',
       listings: []
     }
+    // this.setListingEndpoint()
     this.instersectionObserver = new IntersectionObserver(this.intersectionHandler)
+  }
+
+  componentDidMount () {
+    this.setListingEndpoint()
+  }
+
+  componentDidUpdate () {
+    const currentOptions = JSON.stringify(this.props.options)
+
+    if (this.lastOptions !== currentOptions) {
+      this.lastOptions = currentOptions
+      this.setState({ listings: [] }, () => this.loadListings())
+      this.setListingEndpoint()
+    }
   }
 
   componentWillUnmount () {
     this.instersectionObserver.disconnect()
+  }
+
+  setListingEndpoint = () => {
+    this.setState({
+      listingsEndpoint: createUrl('/listings', {
+        limit: this.props.limit || 12,
+        page: 0,
+        ...this.props.options
+      })
+    })
   }
 
   loadListings = async () => {

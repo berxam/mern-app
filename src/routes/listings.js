@@ -35,7 +35,12 @@ router.post('/', [authenticate(ROLES.BASIC), upload.array('pics', 10)], async (r
     }
   }
 
-  const listing = new ListingModel(req.body)
+  const { keywords, ...body } = req.body
+  if (keywords) {
+    body.keywords = keywords.split(/, */)
+    console.log(body.keywords)
+  }
+  const listing = new ListingModel({ ...body, creatorId: req.user.id })
 
   try {
     const result = await listing.save()

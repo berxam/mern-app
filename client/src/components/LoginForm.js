@@ -74,7 +74,7 @@ export default class extends Component {
   render () {
     return (
       <>
-        <h2>Sign in</h2>
+        <h2>Kirjaudu sisään</h2>
         <Form onSubmit={this.submit}>
           <TextInput
             label="Sähköposti"
@@ -93,12 +93,17 @@ export default class extends Component {
 
           {this.state.submitting
             ? <Loader />
-            : <button type="submit" className="btn-primary">
-                Login
-              </button>
+            : <div>
+                <button type="submit" className="btn-primary">
+                  Kirjaudu sisään
+                </button>
+                <button className="btn" onClick={this.resetPassword}>
+                  Unohdin salasanani
+                </button>
+              </div>
           }
         </Form>
-        <button className="btn" onClick={this.resetPassword}>Unohdin salasanani</button>
+        
         {this.state.responseMsg && <p>{this.state.responseMsg}</p>}
       </>
     )

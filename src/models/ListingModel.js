@@ -66,4 +66,6 @@ const ListingSchema = new Schema({
   timestamps: { createdAt: true }
 })
 
+ListingSchema.index({ title: 'text', description: 'text', keywords: 'text' })
+
 module.exports = model('listing', ListingSchema)

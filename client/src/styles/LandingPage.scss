@@ -1,8 +1,22 @@
+@import '_variables';
+
 .landing {
   min-height: 50vh;
   justify-content: center;
 
+  @media screen and (min-width: map-get($breakpoints, "s")) {
+    padding-right: 3rem;
+  }
+
   p {
-    padding: .8rem 0;
+    padding: .8rem 0 0;
+  }
+}
+
+.landing-image {
+  padding: 3.5rem;
+
+  @media screen and (max-width: map-get($breakpoints, "m")) {
+    display: none;
   }
 }

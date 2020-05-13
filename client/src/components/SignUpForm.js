@@ -40,7 +40,7 @@ export default class extends Component {
   render () {
     return (
       <>
-        <h2>Sign up</h2>
+        <h2>Rekisteröidy</h2>
         <Form
           url={createUrl('/users')}
           method="POST"

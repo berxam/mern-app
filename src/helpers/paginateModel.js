@@ -29,7 +29,7 @@ const isNumBetween = (n, min, max) => {
  */
 module.exports = (model, select = null, exposedFilters = null, exposedSortingFields = null) => {
   return async (req, res) => {
-    let { page, limit, sortBy, asc = false, ...queryFilters } = req.query
+    let { page, limit, sortBy, asc = false, searchString, ...queryFilters } = req.query
 
     const options = {
       limit: isNumBetween(limit, 1, 100) || 20,
@@ -45,7 +45,10 @@ module.exports = (model, select = null, exposedFilters = null, exposedSortingFie
       const baseUrl = new URL(req.fullUrl)
       let numberOfDocuments, documents
 
-      if (exposedFilters && queryFilters) {
+      if (searchString && searchString !== '') {
+        numberOfDocuments = await model.countDocuments({ $text: { $search: searchString } })
+        documents = await model.find({ $text: { $search: searchString } }, select, options)
+      } else if (exposedFilters && queryFilters) {
         const actualFilters = getObjectFields(queryFilters, exposedFilters)
 
         if (!objectIsEmpty(actualFilters)) {

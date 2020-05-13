@@ -29,20 +29,21 @@ export default class extends Component {
           <TextInput
             label="Listauksen nimi" id="create_title" name="title"
             required
-            />
+          />
           <TextArea
             label="Tuotteen tai palvelun kuvaus" id="create_description" name="description"
             required
-            />
+          />
+          <TextInput
+            label="Avainsanoja tuotteelle (erottele pilkulla)" id="create_keywords" name="keywords"
+            required
+          />
           <FileInput
             label="Kuva(t)"
             id="create_picture"
             name="pics"
             multiple
-            />
-          <input type="hidden" name="creatorId" value={
-            JSON.parse(localStorage.getItem('jid')).id
-          } />
+          />
   
           {this.state.submitting
             ? <Loader />
