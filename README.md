@@ -40,6 +40,14 @@ HOST=127.0.0.1
 node -e "console.log( require('crypto').randomBytes(64).toString('hex') )"
 ```
 
+### *Changes made because of Heroku*
+
+- Hardcoded [```attachHostUrls.js```](./blob/master/src/middleware/attachHostUrls.js) to use HTTPS
+- Changed the default host in [```createUrl.js```](./blob/master/client/src/helpers/createUrl.js) from ```http://localhost:5000``` to Heroku URL
+- Changed [verification email link](./blob/master/src/models/UserModel.js#L55) to use HTTPS
+- Changed CORS options in [```fetchWithAuth.js```](./blob/master/client/src/helpers/fetchWithAuth.js) and [```server.js```](./blob/master/src/server.js#L20)
+- Removed ```address``` and ```callback``` from the ```app.listen``` call in [```server.js```](./blob/master/src/server.js#L32)
+
 ## MongoDB
 
 One of the necessary environment variables is your MongoDB URL (aka *"connection string"*). For that you need a MongoDB database. If you don't have a MongoDB account, you can either download a [local MongoDB server](https://www.mongodb.com/download-center/community) or sign up for a [cloud account](https://www.mongodb.com/cloud/atlas/register) and you'll get the URL there.
@@ -81,17 +89,3 @@ npm run client # same as cd client && npm start
 npm run dev
 ```
 Note that while you *can* launch development server for both packages concurrently in one terminal, splitting the VS Code terminal in two and running them separately gives you a far better developing experience.
-
-#### Deploying
-
-***Under construction***
-
-You have to build the React application into an optimized bundle before deploying it.
-```sh
-cd client
-npm run build
-```
-Then go back to project root and run
-```sh
-npm run deploy
-```
