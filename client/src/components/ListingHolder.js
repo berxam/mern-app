@@ -47,16 +47,19 @@ export default class extends Component {
     if (this.state.listingsEndpoint) {
       try {
         const response = await fetch(this.state.listingsEndpoint)
-        const { data, next } = await response.json()
-  
-        const uniqueListings = data.filter(({ _id }) => (
-          this.state.listings.find(l => l._id === _id) ? false : true
-        ))
-  
-        this.setState(state => ({
-            listings: [...state.listings, ...uniqueListings],
-            listingsEndpoint: next
-        }))
+        
+        if (response.ok) {
+          const { data, next } = await response.json()
+    
+          const uniqueListings = data.filter(({ _id }) => (
+            this.state.listings.find(l => l._id === _id) ? false : true
+          ))
+    
+          this.setState(state => ({
+              listings: [...state.listings, ...uniqueListings],
+              listingsEndpoint: next
+          }))
+        }
       } catch (error) {
         console.error(error)
       }

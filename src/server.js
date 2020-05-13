@@ -28,7 +28,8 @@ app.use('/api', require('./api'))
 app.use('/', require('./client'))
 
 // Start listening on address in .env or localhost:5000
-const server = app.listen(
+// const server =
+app.listen(
   process.env.PORT || 8080 // ,
 //  process.env.HOST || 'localhost',
 //  () => {
