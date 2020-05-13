@@ -9,7 +9,7 @@ export default () => {
   return (
     <>
       <Helmet>
-        <title>Vaihtokauppa.com</title>
+        <title>Swapza</title>
         <meta name="description" content={
           'Vaihdantataloudella toimiva verkkokauppa.'
         } />

@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     default: ROLES.BASIC
   },
   notifications: [NotificationSchema],
-  rating: [RatingShema],
+  ratings: [RatingShema],
   verified: {
     type: Boolean,
     default: false

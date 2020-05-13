@@ -41,7 +41,7 @@ export default class extends Component {
             <header className="navbar">
               <div className="wrap">
                 <nav>
-                  <Link to="/" className="logo">Vaihtokauppa</Link>
+                  <Link to="/" className="logo">Swapza</Link>
 
                   <div className={this.state.mobileNavIsOpen ? 'active' : ''}>
                     {context.isAuthenticated ? (
@@ -49,20 +49,20 @@ export default class extends Component {
                         <NotificationButton />
                         <IconButton
                           to="/create"
-                          label="Create"
-                          title="Create new listing"
+                          label="Luo uusi"
+                          title="Luo uusi listaus"
                           icon="edit-1"
                         />
                         <IconButton
                           to={'/users/' + getUser().id}
-                          label="Profile"
-                          title="View and edit profile"
+                          label="Profiili"
+                          title="Katso ja muokkaa omaa profiiliasi"
                           icon="user-2"
                         />
                         <IconButton
                           onClick={() => context.logout()}
-                          label="Log out"
-                          title="Should drop down links to profile, settings, log out"
+                          label="Kirjaudu ulos"
+                          title="Kirjaudu ulos"
                           icon="padlock-1"
                         />
                       </>
@@ -70,12 +70,12 @@ export default class extends Component {
                       <>
                         <IconButton
                           onClick={() => this.openSignupModal()}
-                          label="Sign up"
+                          label="Rekisteröidy"
                           icon="mail"
                         />
                         <IconButton
                           onClick={() => this.openLoginModal()}
-                          label="Sign in"
+                          label="Kirjaudu"
                           icon="padlock"
                         />
                       </>

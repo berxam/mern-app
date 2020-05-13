@@ -52,13 +52,11 @@ export class AuthProvider extends Component {
         const { accessToken } = await response.json()
         return this.setAccessToken(accessToken)
       } else {
-        console.error('[login]', 'Something went wrong')
+        return response.status
       }
     } catch (err) {
-      console.error('[login]', err)
+      return err
     }
-
-    return false
   }
 
   logout = async () => {

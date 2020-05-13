@@ -24,17 +24,27 @@ export default class extends Component {
     new FormData(event.target)
       .forEach((value, key) => formData[key] = value)
 
-    if (!await this.context.login(formData)) {
-      this.setState({
-        submitting: false,
-        responseMsg: 'Something went wrong...'
-      })
-    } else {
-      this.setState({
-        submitting: false,
-        responseMsg: 'Logged in!'
-      })
+    const status = await this.context.login(formData)
+    let responseMsg = ''
+
+    switch (status) {
+      case 404:
+        responseMsg = 'Käyttäjää ei löytynyt.'
+        break
+      case 401:
+        responseMsg = 'Salasana on väärä.'
+        break
+      case 403:
+        responseMsg = 'Sähköpostia ei ole vahvistettu!'
+        break
+      case true:
+        responseMsg = 'Kirjautuminen onnistui!'
+        break
+      default:
+        responseMsg = 'Jotain meni pieleen...'
     }
+
+    this.setState({ submitting: false, responseMsg })
   }
 
   render () {
@@ -43,14 +53,14 @@ export default class extends Component {
         <h2>Sign in</h2>
         <Form onSubmit={this.submit}>
           <TextInput
-            label="Email"
+            label="Sähköposti"
             id="login_email"
             name="email"
             type="email"
             required
           />
           <TextInput
-            label="Password"
+            label="Salasana"
             id="login_password"
             name="password"
             type="password"

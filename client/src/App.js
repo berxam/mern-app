@@ -13,6 +13,7 @@ import Navbar from './components/Navbar'
 import LandingPage from './pages/LandingPage'
 import ListingPage from './pages/ListingPage'
 import ProfilePage from './pages/ProfilePage'
+import VerificationPage from './pages/VerificationPage'
 import CreateListingPage from './pages/CreateListingPage'
 
 export default () => (
@@ -25,6 +26,7 @@ export default () => (
           <Route path="/" exact component={LandingPage} />
           <Route path="/listings/:id" component={withRouter(ListingPage)} />
           <Route path="/users/:id" component={withRouter(ProfilePage)} />
+          <Route path="/verify" component={VerificationPage} />
 
           {/* <Route path="/search" component={SearchPage} /> */}
 
