@@ -10,6 +10,7 @@ import createUrl from '../helpers/createUrl'
 import RatingForm from '../components/RatingForm'
 import RatingsHolder from '../components/RatingsHolder'
 import RatingsAverage from '../components/RatingsAverage'
+import getUser from '../helpers/getUser'
 
 
 export default class extends Component {
@@ -37,7 +38,7 @@ export default class extends Component {
   }
 
   render () {
-    const { username, ratings, location, description, _id } = this.state.user
+    const { username, ratings, location, description } = this.state.user
 
     return (
       <main>
@@ -62,7 +63,7 @@ export default class extends Component {
                 </Modal>
               </section>
             </div>
-            {_id && this.props.match.params.id === _id ? <button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button> : null}
+            {getUser() && this.props.match.params.id === getUser().id ? <button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button> : null}
             <div className="row">
               <h2>Listaukset</h2>
             </div>

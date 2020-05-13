@@ -5,6 +5,7 @@ import TextInput from './TextInput'
 import Loader from './Loader'
 
 import { AuthContext } from './AuthContext'
+import createUrl from '../helpers/createUrl'
 
 export default class extends Component {
   static contextType = AuthContext
@@ -47,6 +48,29 @@ export default class extends Component {
     this.setState({ submitting: false, responseMsg })
   }
 
+  resetPassword = async () => {
+    const email = document.getElementById('login_email').value
+    const url = createUrl('/users/reset-password')
+
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      })
+
+      if (response.ok) {
+        this.setState({ responseMsg: 'Salasana resetoitu, katso sähköpostisi.' })
+      } else {
+        this.setState({ responseMsg: 'Ei onnistunut resetoimaan. Varmista, että sähköpostisi on oikein kirjoitettu.' })
+      }
+    } catch (error) {
+      this.setState({ responseMsg: error.message })
+    }
+  }
+
   render () {
     return (
       <>
@@ -74,6 +98,7 @@ export default class extends Component {
               </button>
           }
         </Form>
+        <button className="btn" onClick={this.resetPassword}>Unohdin salasanani</button>
         {this.state.responseMsg && <p>{this.state.responseMsg}</p>}
       </>
     )
