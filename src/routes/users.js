@@ -8,7 +8,7 @@ const { getObjectFields } = require('../helpers/objects')
 
 router.get('/:id', async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id, 'username rating location description')
+    const user = await UserModel.findById(req.params.id, 'username rating location description ratings')
     res.json(user)
   } catch (err) {
     switch (err.name) {

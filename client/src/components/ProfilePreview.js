@@ -9,7 +9,6 @@ export default class extends Component {
     super(props)
       this.state = {
           userName: '',
-          userRating: [],
           location: ''
       }
   }
@@ -28,7 +27,6 @@ export default class extends Component {
           console.log(user)
           this.setState({
               userName: user.username,
-              userRating: [user.rating.positive, user.rating.negative],
               location: user.location
           })
       } else {
@@ -43,13 +41,11 @@ export default class extends Component {
     return (
       <div className="row">
         <section className="d12 m8">
-        <h3>
-        <Link to={`/users/${this.props.userID}`}>
+          <h3>
+          <Link to={`/users/${this.props.userID}`}>
             {this.state.userName}
-        </Link>
-        </h3> <br/>
-          <p>Palaute:</p>
-          <p>{this.state.userRating[0]} Positiivista {this.state.userRating[1]} Negatiivista </p>
+          </Link>
+          </h3> <br/>
           <p>Sijainti: {this.state.location}</p>
         </section>
       </div>
