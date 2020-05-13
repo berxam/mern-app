@@ -9,11 +9,11 @@ export default class extends Component {
     return (
       <main className="row">
         <Helmet>
-          <title>Create listing</title>
+          <title>Luo listaus</title>
         </Helmet>
 
         <div className="d12">
-          <h1>Create listing</h1>
+          <h1>Luo listaus</h1>
           <CreateListingForm />
         </div>
       </main>

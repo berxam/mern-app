@@ -1,10 +1,11 @@
+const { randomBytes } = require('crypto')
 const router = require('express').Router()
-
 const ROLES = require('../helpers/roles')
 const UserModel = require('../models/UserModel')
 const { notifEmitter } = require('../models/Notifications')
 const { authenticate, cookieAuth, ensureUserId } = require('../middleware/auth')
 const { getObjectFields } = require('../helpers/objects')
+const sendMail = require('../helpers/sendMail')
 
 router.get('/:id', async (req, res) => {
   try {
@@ -30,6 +31,50 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(400).json({ errors: [error.message] })
+  }
+})
+
+router.put('/verify', async (req, res) => {
+  const verificationKey = req.body.key
+
+  try {
+    const user = await UserModel.findOne({ verificationKey })
+    user.verified = true
+    await user.save()
+    res.sendStatus(204)
+  } catch (error) {
+    switch (error.name) {
+      case 'CastError':
+        res.sendStatus(404)
+        break
+      default:
+        res.status(500).json(error)
+    }
+  }
+})
+
+router.put('/reset-password', async (req, res) => {
+  const email = req.body.email
+
+  try {
+    const user = await UserModel.findOne({ email })
+    const randomPassword = randomBytes(32).toString('hex')
+    user.password = randomPassword
+    await user.save()
+    await sendMail({
+      to: email,
+      subject: 'Password resetted',
+      html: `Your new password is ${randomPassword}`
+    })
+    res.sendStatus(204)
+  } catch (error) {
+    switch (error.name) {
+      case 'CastError':
+        res.sendStatus(404)
+        break
+      default:
+        res.status(500).json(error)
+    }
   }
 })
 

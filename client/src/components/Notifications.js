@@ -182,8 +182,8 @@ export default class NotificationButton extends Component {
       <div className="notifs">
         <Helmet
           titleTemplate={unreadNotifs ?
-            `(${unreadNotifs}) %s - Vaihtokauppa`
-            : '%s - Vaihtokauppa'}
+            `(${unreadNotifs}) %s - Swapza`
+            : '%s - Swapza'}
         />
 
         <IconButton

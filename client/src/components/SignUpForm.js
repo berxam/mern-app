@@ -17,7 +17,7 @@ export default class extends Component {
   onSuccess = (res) => {
     this.setState({
       submitting: false,
-      responseMsg: 'Registered! Verify your email.'
+      responseMsg: 'Rekisteröity! Vahvista sähköpostisi.'
     })
   }
 
@@ -32,7 +32,7 @@ export default class extends Component {
     } else {
       this.setState({
         submitting: false,
-        responseMsg: "Couldn't reach server!"
+        responseMsg: 'Jotain meni pieleen...'
       })
     }
   }
@@ -49,13 +49,13 @@ export default class extends Component {
           onError={this.onError}
         >
           <TextInput
-            label="Email" id="signup_email" name="email" type="email" required
+            label="Sähköposti" id="signup_email" name="email" type="email" required
           />
           <TextInput
-            label="Username" id="signup_username" name="username" required
+            label="Käyttäjänimi" id="signup_username" name="username" required
           />
           <TextInput
-            label="Password" id="signup_password" name="password" type="password" required
+            label="Salasana" id="signup_password" name="password" type="password" required
           />
 
           {this.state.submitting
