@@ -10,7 +10,7 @@ import getUser from './getUser'
 export default (url, init = null) => {
   const user = getUser()
   let options = {
-    credentials: 'include',
+    // credentials: 'include',
     headers: {
       authorization: `Bearer ${user.accessToken}`
     }
