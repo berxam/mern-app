@@ -5,11 +5,13 @@ import {
   Switch,
   withRouter
 } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 
-import ProtectedRoute from './components/ProtectedRoute'
+import ROLES from './helpers/roles'
 import { AuthProvider } from './components/AuthContext'
-import Navbar from './components/Navbar'
+import ProtectedRoute from './components/ProtectedRoute'
 
+import Navbar from './components/Navbar'
 import LandingPage from './pages/LandingPage'
 import ListingPage from './pages/ListingPage'
 import ProfilePage from './pages/ProfilePage'
@@ -19,6 +21,8 @@ import CreateListingPage from './pages/CreateListingPage'
 export default () => (
   <Router>
     <AuthProvider>
+      <Helmet titleTemplate="%s - Swapza" />
+
       <Navbar />
 
       <div className="wrap">
@@ -28,12 +32,8 @@ export default () => (
           <Route path="/users/:id" component={withRouter(ProfilePage)} />
           <Route path="/verify" component={VerificationPage} />
 
-          {/* <Route path="/search" component={SearchPage} /> */}
-
-          <ProtectedRoute path="/create" component={CreateListingPage} />
-          <ProtectedRoute path="/settings" render={() => 'settings'}
-            /*component={SettingsPage}*/
-          />
+          <ProtectedRoute level={ROLES.BASIC} path="/create" component={CreateListingPage} />
+          <ProtectedRoute level={ROLES.ADMIN} path="/admin" render={() => 'admin'} />
 
           <Route render={() => '404 Not found'}/>
         </Switch>

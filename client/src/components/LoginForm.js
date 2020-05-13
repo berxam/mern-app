@@ -74,7 +74,7 @@ export default class extends Component {
               </button>
           }
         </Form>
-        {this.state.responseMsg && <div>{this.state.responseMsg}</div>}
+        {this.state.responseMsg && <p>{this.state.responseMsg}</p>}
       </>
     )
   }

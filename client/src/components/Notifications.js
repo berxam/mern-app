@@ -188,7 +188,7 @@ export default class NotificationButton extends Component {
 
         <IconButton
           onClick={() => this.state.panelIsOpen ? this.hide() : this.open()}
-          label="Notifs"
+          label="Ilmoitukset"
           icon="alarm"
           aria-haspopup="true"
           aria-expanded={this.state.panelIsOpen}

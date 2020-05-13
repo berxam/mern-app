@@ -36,6 +36,7 @@ export default class extends Component {
 
       if (response.ok) {
         console.log('Tarjous tehty onnistuneesti')
+        window.location.reload()
       } else {
         console.error(response)
       }

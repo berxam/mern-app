@@ -107,7 +107,7 @@ export class AuthProvider extends Component {
   }
 
   setAccessToken = accessToken => {
-    const { id, exp /*sec*/, username } = jwtDecode(accessToken)
+    const { id, exp /*sec*/, username, role } = jwtDecode(accessToken)
     const expiresAt = new Date(exp * 1000 /*ms*/)
     const today = new Date()
     const toExpire = expiresAt - today
@@ -117,7 +117,7 @@ export class AuthProvider extends Component {
       return false
     }
 
-    localStorage.setItem('jid', JSON.stringify({ id, accessToken, username }))
+    localStorage.setItem('jid', JSON.stringify({ id, accessToken, username, role }))
     this.setState({ isAuthenticated: true })
 
     clearTimeout(this.refreshTimeout)

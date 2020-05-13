@@ -7,6 +7,7 @@ import ListingPreview from '../components/ListingPreview'
 import EditForm from '../components/EditForm'
 import Modal from '../components/Modal'
 import getUser from '../helpers/getUser'
+import createUrl from '../helpers/createUrl'
 
 export default class extends Component {
   constructor (props) {
@@ -21,12 +22,12 @@ export default class extends Component {
   }
 
   loadUser = async () => {
+    const url = createUrl(`/users/${this.props.match.params.id}`)
+
     try {
-      const response = await fetch(`http://localhost:5000/users/${
-        this.props.match.params.id
-      }`)
+      const response = await fetch(url)
       const user = await response.json()
-  
+
       this.setState({ user })
     } catch (error) {
       console.error('[userPage:loaduser]', error)
@@ -34,15 +35,11 @@ export default class extends Component {
   }
 
   render () {
-    const { username, rating, location, description } = this.state.user
-    let button
-    if (getUser() && this.props.match.params.id === getUser().id) {
-      button = <button className="btn-primary" onClick={() => this.openEditModal()}> Muokkaa tietoja </button>
-      }
+    const { username, rating, location, description, _id } = this.state.user
 
     return (
       <main>
-        {username && rating ? (
+        {username ? (
           <>
             <Helmet>
               <title>{username}</title>
@@ -50,14 +47,14 @@ export default class extends Component {
             <div className="row">
               <section className="d12 m8">
                 <h1>{username}</h1>
-                <p>Sijainti: {location}</p>
-                <p>{description}</p>
+                {location ? <p>Sijainti: {location}</p> : null}
+                {description ? <p>{description}</p> : null}
                 <Modal setOpener={open => this.openEditModal = open}>
                   <EditForm id={this.props.match.params.id} />
                 </Modal>
               </section>
             </div>
-            {button}
+            {_id && this.props.match.params.id === _id ? <button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button> : null}
             <div className="row">
               <h2>Listaukset</h2>
             </div>

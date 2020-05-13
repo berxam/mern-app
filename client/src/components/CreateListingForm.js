@@ -18,23 +18,24 @@ export default class extends Component {
     return (
       <>
         <Form
+          auth
           url="http://localhost:5000/listings"
           method="POST"
           multipart
           setLoader={() => this.setState({ submitting: true })}
-          onSuccess={() => this.setState({ submitting: false })}
-          onError={() => this.setState({ submitting: false })}
+          onSuccess={() => this.setState({ submitting: false, responseMsg: 'Listaus luotu onnistuneesti!' })}
+          onError={() => this.setState({ submitting: false, responseMsg: 'Jotain meni pieleen...' })}
           >
           <TextInput
-            label="Product or service name" id="create_title" name="title"
+            label="Listauksen nimi" id="create_title" name="title"
             required
             />
           <TextArea
-            label="Description" id="create_description" name="description"
+            label="Tuotteen tai palvelun kuvaus" id="create_description" name="description"
             required
             />
           <FileInput
-            label="Picture(s)"
+            label="Kuva(t)"
             id="create_picture"
             name="pics"
             multiple
@@ -50,7 +51,7 @@ export default class extends Component {
               </button>
           }
         </Form>
-        {this.state.responseMsg && <div>{this.state.responseMsg}</div>}
+        {this.state.responseMsg && <p>{this.state.responseMsg}</p>}
       </>
     )
   }
