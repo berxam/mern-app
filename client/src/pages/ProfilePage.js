@@ -8,6 +8,10 @@ import EditForm from '../components/EditForm'
 import Modal from '../components/Modal'
 import getUser from '../helpers/getUser'
 import createUrl from '../helpers/createUrl'
+import RatingForm from '../components/RatingForm'
+import RatingsHolder from '../components/RatingsHolder'
+import RatingsAverage from '../components/RatingsAverage'
+
 
 export default class extends Component {
   constructor (props) {
@@ -27,7 +31,6 @@ export default class extends Component {
     try {
       const response = await fetch(url)
       const user = await response.json()
-
       this.setState({ user })
     } catch (error) {
       console.error('[userPage:loaduser]', error)
@@ -35,7 +38,7 @@ export default class extends Component {
   }
 
   render () {
-    const { username, rating, location, description, _id } = this.state.user
+    const { username, ratings, location, description, _id } = this.state.user
 
     return (
       <main>
@@ -47,8 +50,14 @@ export default class extends Component {
             <div className="row">
               <section className="d12 m8">
                 <h1>{username}</h1>
+              </section>
+            </div>
+            <div className="row">
+              <section className="d12 m8">
                 {location ? <p>Sijainti: {location}</p> : null}
                 {description ? <p>{description}</p> : null}
+                {ratings ? <p>Palaute: <RatingsAverage ratings={ratings} /> </p> : null}
+                <RatingForm id={this.props.match.params.id}/>
                 <Modal setOpener={open => this.openEditModal = open}>
                   <EditForm id={this.props.match.params.id} />
                 </Modal>
@@ -65,8 +74,11 @@ export default class extends Component {
                     <ListingPreview key={_id} id={_id} {...rest} />
                   )}
                 </ListingHolder>
+                <h2>Kommentit</h2>
+                <RatingsHolder ratings={ratings} />
               </section>
             </div>
+            
           </>
         ) : <Loader />}
       </main>

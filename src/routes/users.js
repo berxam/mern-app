@@ -9,8 +9,7 @@ const sendMail = require('../helpers/sendMail')
 
 router.get('/:id', async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id, 'username rating location description')
-    console.log(user)
+    const user = await UserModel.findById(req.params.id, 'username location description ratings')
     res.json(user)
   } catch (err) {
     switch (err.name) {
