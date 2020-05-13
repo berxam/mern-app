@@ -4,7 +4,6 @@ import Form from './Form'
 
 import fetchWithAuth from '../helpers/fetchWithAuth'
 import createUrl from '../helpers/createUrl'
-import TextInput from '../components/TextInput'
 import TextArea from '../components/TextArea'
 import getUser from '../helpers/getUser'
 
