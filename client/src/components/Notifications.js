@@ -147,6 +147,13 @@ export default class NotificationButton extends Component {
   onNewNotif = (messageEvent) => {
     const notif = JSON.parse(messageEvent.data)
 
+    notif.removeNotif = () => {
+      this.setState(state => ({
+        notifications: state.notifications
+          .filter(n => n._id !== notif._id)
+      }))
+    }
+
     this.setState(state => ({
       notifications: [notif, ...state.notifications]
     }))

@@ -15,7 +15,7 @@ module.exports = (field = 'id') => {
       try {
         const listing = await ListingModel.findById(listingId)
 
-        if (listing.creatorId === userId) {
+        if (listing.creatorId === userId || req.user.role === ROLES.ADMIN) {
           req.listing = listing
           return next()
         }

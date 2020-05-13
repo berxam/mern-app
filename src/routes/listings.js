@@ -31,7 +31,7 @@ router.post('/', [authenticate(ROLES.BASIC), upload.array('pics', 10)], async (r
     try {
       req.body.images = await saveImages(req.files, req.realBaseUrl)
     } catch (error) {
-      return res.sendStatus(500)
+      console.error(error)
     }
   }
 
