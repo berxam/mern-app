@@ -42,11 +42,11 @@ node -e "console.log( require('crypto').randomBytes(64).toString('hex') )"
 
 ### *Changes made because of Heroku*
 
-- Hardcoded [```attachHostUrls.js```](./blob/master/src/middleware/attachHostUrls.js) to use HTTPS
-- Changed the default host in [```createUrl.js```](./blob/master/client/src/helpers/createUrl.js) from ```http://localhost:5000``` to Heroku URL
-- Changed [verification email link](./blob/master/src/models/UserModel.js#L55) to use HTTPS
-- Changed CORS options in [```fetchWithAuth.js```](./blob/master/client/src/helpers/fetchWithAuth.js) and [```server.js```](./blob/master/src/server.js#L20)
-- Removed ```address``` and ```callback``` from the ```app.listen``` call in [```server.js```](./blob/master/src/server.js#L32)
+- Hardcoded [```attachHostUrls.js```](./src/middleware/attachHostUrls.js) to use HTTPS
+- Changed the default host in [```createUrl.js```](./client/src/helpers/createUrl.js) from ```http://localhost:5000``` to Heroku URL
+- Changed [verification email link](./src/models/UserModel.js#L55) to use HTTPS
+- Changed CORS options in [```fetchWithAuth.js```](./client/src/helpers/fetchWithAuth.js) and [```server.js```](./src/server.js#L20)
+- Removed ```address``` and ```callback``` from the ```app.listen``` call in [```server.js```](./src/server.js#L32)
 
 ## MongoDB
 
