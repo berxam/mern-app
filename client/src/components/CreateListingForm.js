@@ -5,6 +5,7 @@ import TextInput from '../components/TextInput'
 import TextArea from '../components/TextArea'
 import FileInput from '../components/FileInput'
 import Loader from '../components/Loader'
+import createUrl from '../helpers/createUrl'
 export default class extends Component {
   constructor (props) {
     super(props)
@@ -19,7 +20,7 @@ export default class extends Component {
       <>
         <Form
           auth
-          url="http://localhost:5000/listings"
+          url={createUrl('/listings')}
           method="POST"
           multipart
           setLoader={() => this.setState({ submitting: true })}
