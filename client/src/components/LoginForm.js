@@ -97,7 +97,7 @@ export default class extends Component {
                 <button type="submit" className="btn-primary">
                   Kirjaudu sisään
                 </button>
-                <button className="btn" onClick={this.resetPassword}>
+                <button className="btn" type="button" onClick={this.resetPassword}>
                   Unohdin salasanani
                 </button>
               </div>

@@ -6,7 +6,8 @@
  *   req.fullUrl     // http://localhost:5000/listings/idhere
  */
 module.exports = (req, res, next) => {
-  req.realBaseUrl = `${req.protocol}://${req.get('host')}`
+  // req.realBaseUrl = `${req.protocol}://${req.get('host')}`
+  req.realBaseUrl = `https://${req.get('host')}`
   req.fullUrl = req.realBaseUrl + req.baseUrl + req.path
   next()
 }

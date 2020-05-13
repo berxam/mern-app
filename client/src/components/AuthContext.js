@@ -88,8 +88,10 @@ export class AuthProvider extends Component {
   }
 
   refresh = async () => {
+    const url = createUrl('/auth/refresh')
+
     try {
-      const response = await fetch('http://localhost:5000/auth/refresh', {
+      const response = await fetch(url, {
         credentials: 'include'
       })
 
