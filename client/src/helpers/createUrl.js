@@ -6,7 +6,7 @@
  * @returns {URL} Created URL object
  */
 export default (endpoint, params = {}) => {
-  const url = new URL(endpoint, 'http://localhost:5000')
+  const url = new URL('/api' + endpoint, 'https://swapza-beta.herokuapp.com')
 
   for (const key in params) {
     url.searchParams.append(key, params[key])

@@ -17,16 +17,15 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 const app = express()
 
 // Middleware
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }))
+app.use(cors(/* { credentials: true, origin: 'http://localhost:3000' } */))
 app.use('/uploads', express.static(resolve(__dirname, '../uploads')))
 app.use(express.json())
 app.use(cookieParser())
 app.use(attachHostUrls)
 
-// Bind routes
-app.use('/listings', require('./routes/listings'))
-app.use('/users', require('./routes/users'))
-app.use('/auth', require('./routes/auth'))
+// Bind app routes
+app.use('/api', require('./api'))
+app.use('/', require('./client'))
 
 // Start listening on address in .env or localhost:5000
 const server = app.listen(
