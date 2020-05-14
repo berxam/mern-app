@@ -63,8 +63,6 @@ export default class extends Component {
       } catch (error) {
         console.error(error)
       }
-    } else {
-      this.instersectionObserver.disconnect()
     }
   }
 
