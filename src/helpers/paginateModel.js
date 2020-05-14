@@ -29,7 +29,13 @@ const isNumBetween = (n, min, max) => {
  */
 module.exports = (model, select = null, exposedFilters = null, exposedSortingFields = null) => {
   return async (req, res) => {
-    let { page, limit, sortBy, asc = false, searchString, ...queryFilters } = req.query
+    let { page, limit, sortBy, asc = 'false', searchString, ...queryFilters } = req.query
+
+    if (asc === 'true' || asc === '1') {
+      asc = true
+    } else {
+      asc = false
+    }
 
     const options = {
       limit: isNumBetween(limit, 1, 100) || 20,
