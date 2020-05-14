@@ -23,8 +23,11 @@ export default class extends Component {
     const currentOptions = JSON.stringify(this.props.options)
 
     if (this.lastOptions !== currentOptions) {
+      console.log('Options have changed...')
       this.lastOptions = currentOptions
       this.setListingEndpoint()
+    } else {
+      console.log('Options have not changed.')
     }
   }
 
@@ -33,12 +36,16 @@ export default class extends Component {
   }
 
   setListingEndpoint = () => {
+    const listingsEndpoint = createUrl('/listings', {
+      limit: this.props.limit || 12,
+      page: 0,
+      ...this.props.options
+    })
+
+    console.log(`Setting initial listingsEndpoint to be ${listingsEndpoint}`)
+
     this.setState({
-      listingsEndpoint: createUrl('/listings', {
-        limit: this.props.limit || 12,
-        page: 0,
-        ...this.props.options
-      }),
+      listingsEndpoint,
       listings: []
     }, () => this.loadListings())
   }
@@ -59,15 +66,20 @@ export default class extends Component {
               listings: [...state.listings, ...uniqueListings],
               listingsEndpoint: next
           }))
+          console.log(`Setting next listingsEndpoint to be ${next}`)
+        } else {
+          console.error(response)
         }
       } catch (error) {
         console.error(error)
       }
+    } else {
+      console.log('Load listings triggered but theres no endpoint to load from')
     }
   }
 
   intersectionHandler = (entries) => {
-    if (entries[0].isIntersecting) this.loadListings()
+    if (entries.some(e => e.isIntersecting)) this.loadListings()
   }
 
   setRef = (ref) => {
