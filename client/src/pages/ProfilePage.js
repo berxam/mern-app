@@ -11,7 +11,7 @@ import RatingForm from '../components/RatingForm'
 import RatingsHolder from '../components/RatingsHolder'
 import RatingsAverage from '../components/RatingsAverage'
 import getUser from '../helpers/getUser'
-
+import { AuthContext } from '../components/AuthContext'
 
 export default class extends Component {
   constructor (props) {
@@ -58,11 +58,20 @@ export default class extends Component {
                 {getUser() && this.props.match.params.id === getUser().id ? <div><button className="btn-primary" onClick={() => this.openEditModal()}>Muokkaa tietoja</button></div> : null}
               </section>
               <section className="d12 m4">
-                <h2>Kirjoita kommentti</h2>
-                <RatingForm id={this.props.match.params.id}/>
-                <Modal setOpener={open => this.openEditModal = open}>
-                  <EditForm id={this.props.match.params.id} />
-                </Modal>
+                <AuthContext.Consumer>
+                  {context => (
+                    context.isAuthenticated ? (
+                      <>
+                        <h2>Kirjoita kommentti</h2>
+                        <RatingForm id={this.props.match.params.id}/>
+                        <Modal setOpener={open => this.openEditModal = open}>
+                          <EditForm id={this.props.match.params.id} />
+                        </Modal>
+                      </>
+                    ) : null
+                  )}
+                </AuthContext.Consumer>
+
                 <h2>Kommentit</h2>
                 <RatingsHolder ratings={ratings} />
               </section>
