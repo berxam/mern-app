@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-import fetchWithAuth from '../helpers/fetchWithAuth'
 import createUrl from '../helpers/createUrl'
 import {Link} from 'react-router-dom'
 
@@ -21,7 +20,8 @@ export default class extends Component {
     const url = createUrl(`/users/${this.props.userID}`)
     
     try {
-      const response = await fetchWithAuth(url)
+      const response = await fetch(url)
+
       if (response.ok) {
           const user = await response.json()
           this.setState({
