@@ -65,14 +65,14 @@ module.exports = (model, select = null, exposedFilters = null, exposedSortingFie
         documents = await model.find({}, select, options)
       }
 
-      const nextPageIsEmpty = numberOfDocuments < options.limit * (page + 1)
+      const nextPageHasContent = numberOfDocuments > options.limit * (page + 1)
       baseUrl.searchParams.append('limit', options.limit)
       baseUrl.searchParams.append('sortBy', Object.keys(options.sort)[0])
       baseUrl.searchParams.append('asc', asc)
 
       res.json({
         count: numberOfDocuments,
-        next: nextPageIsEmpty ? null : `${baseUrl}&page=${page + 1}`,
+        next: nextPageHasContent ? `${baseUrl}&page=${page + 1}` : null,
         prev: page <= 0 ? null : `${baseUrl}&page=${page - 1}`,
         data: documents
       })
