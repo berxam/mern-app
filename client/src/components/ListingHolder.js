@@ -24,7 +24,6 @@ export default class extends Component {
 
     if (this.lastOptions !== currentOptions) {
       this.lastOptions = currentOptions
-      this.setState({ listings: [] }, () => this.loadListings())
       this.setListingEndpoint()
     }
   }
@@ -39,15 +38,16 @@ export default class extends Component {
         limit: this.props.limit || 12,
         page: 0,
         ...this.props.options
-      })
-    })
+      }),
+      listings: []
+    }, () => this.loadListings())
   }
 
   loadListings = async () => {
     if (this.state.listingsEndpoint) {
       try {
         const response = await fetch(this.state.listingsEndpoint)
-        
+
         if (response.ok) {
           const { data, next } = await response.json()
     
